@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NATIVE_TARGET: armeabi-v7a
+      KEYSTORE_PASS: android
+      ALIAS_NAME: androiddebugkey
+      ALIAS_PASS: android
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_HARDLINK: "true"
       CCACHE_NOHASHDIR: "true"
@@ -67,6 +70,18 @@ jobs:
         run: pip install Cython==3.0.11
       - name: Configure Android SDK path
         run: echo "sdk.dir=${ANDROID_HOME}" >> local.properties
+      - name: Create temporary CI signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f TMessagesProj/release.keystore
+          keytool -genkeypair -noprompt \
+            -keystore TMessagesProj/release.keystore \
+            -storepass "$KEYSTORE_PASS" \
+            -alias "$ALIAS_NAME" \
+            -keypass "$ALIAS_PASS" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Telegram CI, OU=Build, O=Telegram, L=None, ST=None, C=US"
       - name: Configure Gradle memory
         run: |
           sed -i '/^org\.gradle\.jvmargs=/d' gradle.properties
