@@ -60,10 +60,11 @@ keystorePwd = keystorePwd ?: System.getenv('KEYSTORE_PASS')
 alias = alias ?: System.getenv('ALIAS_NAME')
 pwd = pwd ?: System.getenv('ALIAS_PASS')
 
-def nativeTarget = System.getenv('NATIVE_TARGET') ?: ''
+// This fork intentionally ships a single 32-bit ARM APK.
+def nativeTarget = System.getenv('NATIVE_TARGET') ?: 'armeabi-v7a'
 // Plugin package is arm-only: shadowhook doesn't support x86.
-def pluginAbis = ['armeabi-v7a', 'arm64-v8a']
-def normalAbis = ['armeabi-v7a', 'arm64-v8a', 'x86_64']
+def pluginAbis = ['armeabi-v7a']
+def normalAbis = ['armeabi-v7a']
 // Java runtime classes come from src/plugin/java/com/chaquo (see README there).
 def chaquopyTargetVersion = '3.11.10-1'
 def chaquopyPluginVersion = '16.1.0'
@@ -138,7 +139,7 @@ android {
             enable = true
             reset()
             include(*(nativeTarget.isBlank() ? normalAbis : [nativeTarget]))
-            universalApk = nativeTarget.isBlank()
+            universalApk = false
         }
     }
 
@@ -500,7 +501,7 @@ androidComponents {
                 def abi = output.filters.find { it.filterType.name() == 'ABI' }?.identifier
                 output.enabled.set(pluginAbis.contains(abi))
             }
-            String gramName = 'NagramXF'
+            String gramName = 'Telegram'
             String first = String.format('%s-v%s(%s)', gramName, verName, verCode)
             output.outputFileName.set(
                 output.outputFileName.get()

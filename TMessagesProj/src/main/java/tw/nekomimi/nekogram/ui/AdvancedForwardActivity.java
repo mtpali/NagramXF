@@ -31,11 +31,11 @@ public class AdvancedForwardActivity extends BaseFragment {
     private static final int MENU_DONE = 1;
 
     public interface Delegate {
-        void onPrepared(HashMap<Integer, String> editedTexts);
+        void onPrepared(HashMap<String, String> editedTexts);
     }
 
     private final ArrayList<MessageObject> messages;
-    private final HashMap<Integer, EditTextBoldCursor> editors = new HashMap<>();
+    private final HashMap<String, EditTextBoldCursor> editors = new HashMap<>();
     private Delegate delegate;
 
     public AdvancedForwardActivity(ArrayList<MessageObject> messages) {
@@ -107,7 +107,7 @@ public class AdvancedForwardActivity extends BaseFragment {
             background.setStroke(dp(1), getThemedColor(Theme.key_divider));
             editor.setBackground(background);
             editor.setSelection(editor.length());
-            editors.put(message.getId(), editor);
+            editors.put(getMessageKey(message), editor);
             content.addView(editor, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         }
 
@@ -145,11 +145,12 @@ public class AdvancedForwardActivity extends BaseFragment {
     }
 
     private void submit() {
-        HashMap<Integer, String> editedTexts = new HashMap<>();
+        HashMap<String, String> editedTexts = new HashMap<>();
         for (MessageObject message : messages) {
-            EditTextBoldCursor editor = editors.get(message.getId());
+            String messageKey = getMessageKey(message);
+            EditTextBoldCursor editor = editors.get(messageKey);
             if (editor != null) {
-                editedTexts.put(message.getId(), editor.getText().toString());
+                editedTexts.put(messageKey, editor.getText().toString());
             }
         }
         Delegate currentDelegate = delegate;
@@ -157,5 +158,9 @@ public class AdvancedForwardActivity extends BaseFragment {
         if (currentDelegate != null) {
             AndroidUtilities.runOnUIThread(() -> currentDelegate.onPrepared(editedTexts), 180);
         }
+    }
+
+    public static String getMessageKey(MessageObject message) {
+        return message.getDialogId() + ":" + message.getId();
     }
 }

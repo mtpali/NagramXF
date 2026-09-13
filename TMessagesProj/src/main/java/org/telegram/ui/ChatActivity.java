@@ -950,7 +950,7 @@ public class ChatActivity extends BaseFragment implements
     public MessageObject forwardingMessage;
     public MessageObject.GroupedMessages forwardingMessageGroup;
     private AyuForward ayuForwardHandler;
-    private HashMap<Integer, String> advancedForwardTexts;
+    private HashMap<String, String> advancedForwardTexts;
     private MessageObject.GroupedMessages replyingQuoteGroup;
     public MessageObject replyingTopMessage;
     private ReplyQuote replyingQuote;
@@ -15696,7 +15696,7 @@ public class ChatActivity extends BaseFragment implements
         forwardMessages(arrayList, fromMyName, hideCaption, notify, scheduleDate, did, payStars, null);
     }
 
-    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long did, long payStars, HashMap<Integer, String> editedTexts) {
+    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long did, long payStars, HashMap<String, String> editedTexts) {
         if (arrayList == null || arrayList.isEmpty()) {
             return;
         }
@@ -37005,7 +37005,7 @@ public class ChatActivity extends BaseFragment implements
             }
         }
 
-        final HashMap<Integer, String> preparedForwardTexts = advancedForwardTexts == null ? null : new HashMap<>(advancedForwardTexts);
+        final HashMap<String, String> preparedForwardTexts = advancedForwardTexts == null ? null : new HashMap<>(advancedForwardTexts);
         if (!fragment.isQuote && (preparedForwardTexts != null || dids.size() > 1 || dids.get(0).dialogId == getUserConfig().getClientUserId() || message != null || scheduleDate != 0 || !notify)) {
             return !AlertsCreator.ensurePaidMessagesMultiConfirmationTopicKeys(currentAccount, dids, fmessages.size() + (TextUtils.isEmpty(message) ? 0 : 1), prices -> {
                 if (fragment.resetDelegate) {

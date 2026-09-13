@@ -26,6 +26,8 @@ import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ChatActivity;
 
+import tw.nekomimi.nekogram.ui.AdvancedForwardActivity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -301,11 +303,11 @@ public class AyuForward {
         forwardMessages(messagesToSend, targetDialogId, showUndo, hideCaption, notify, scheduleDate, payStars, chunkIndex, chunkCount, null, onComplete);
     }
 
-    public void forwardMessages(ArrayList<MessageObject> messagesToSend, long targetDialogId, boolean showUndo, boolean hideCaption, boolean notify, int scheduleDate, long payStars, Map<Integer, String> editedTexts, CompletionCallback onComplete) {
+    public void forwardMessages(ArrayList<MessageObject> messagesToSend, long targetDialogId, boolean showUndo, boolean hideCaption, boolean notify, int scheduleDate, long payStars, Map<String, String> editedTexts, CompletionCallback onComplete) {
         forwardMessages(messagesToSend, targetDialogId, showUndo, hideCaption, notify, scheduleDate, payStars, 0, 1, editedTexts, onComplete);
     }
 
-    private void forwardMessages(ArrayList<MessageObject> messagesToSend, long targetDialogId, boolean showUndo, boolean hideCaption, boolean notify, int scheduleDate, long payStars, int chunkIndex, int chunkCount, Map<Integer, String> editedTexts, CompletionCallback onComplete) {
+    private void forwardMessages(ArrayList<MessageObject> messagesToSend, long targetDialogId, boolean showUndo, boolean hideCaption, boolean notify, int scheduleDate, long payStars, int chunkIndex, int chunkCount, Map<String, String> editedTexts, CompletionCallback onComplete) {
         if (disposed || messagesToSend == null || messagesToSend.isEmpty() || (!detached && parentFragment != null && parentFragment.getParentActivity() == null)) {
             setFailureReason(null);
             runCompletion(onComplete, false);
@@ -313,12 +315,12 @@ public class AyuForward {
         }
 
         ArrayList<MessageObject> request = new ArrayList<>(messagesToSend);
-        Map<Integer, String> requestedEdits = editedTexts == null ? null : new HashMap<>(editedTexts);
+        Map<String, String> requestedEdits = editedTexts == null ? null : new HashMap<>(editedTexts);
         long taskId = startRun(request.size(), targetDialogId, chunkIndex, chunkCount);
         forwardQueue.postRunnable(() -> executeForward(request, targetDialogId, hideCaption, notify, scheduleDate, payStars, requestedEdits, taskId, onComplete));
     }
 
-    private void executeForward(ArrayList<MessageObject> messages, long targetDialogId, boolean hideCaption, boolean notify, int scheduleDate, long payStars, Map<Integer, String> editedTexts, long taskId, CompletionCallback onComplete) {
+    private void executeForward(ArrayList<MessageObject> messages, long targetDialogId, boolean hideCaption, boolean notify, int scheduleDate, long payStars, Map<String, String> editedTexts, long taskId, CompletionCallback onComplete) {
         try {
             if (!ensureTaskCanProceed(taskId, onComplete)) {
                 return;
@@ -366,10 +368,11 @@ public class AyuForward {
         }
     }
 
-    private boolean forwardSingleMessage(MessageObject messageObject, long targetDialogId, boolean hideCaption, boolean notify, int scheduleDate, long payStars, ForwardGroupState groupState, Map<Integer, String> editedTexts) {
+    private boolean forwardSingleMessage(MessageObject messageObject, long targetDialogId, boolean hideCaption, boolean notify, int scheduleDate, long payStars, ForwardGroupState groupState, Map<String, String> editedTexts) {
         String originalText = resolveMessageText(messageObject);
-        boolean hasTextOverride = editedTexts != null && editedTexts.containsKey(messageObject.getId());
-        String sourceText = hasTextOverride ? editedTexts.get(messageObject.getId()) : originalText;
+        String messageKey = AdvancedForwardActivity.getMessageKey(messageObject);
+        boolean hasTextOverride = editedTexts != null && editedTexts.containsKey(messageKey);
+        String sourceText = hasTextOverride ? editedTexts.get(messageKey) : originalText;
         boolean textWasEdited = hasTextOverride && !TextUtils.equals(sourceText, originalText);
         ArrayList<TLRPC.MessageEntity> entities = textWasEdited ? null : copyEntitiesOrNull(messageObject);
         boolean mediaDownloadable = AyuMessageUtils.isMediaDownloadable(messageObject, false);
