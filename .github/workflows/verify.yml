@@ -111,5 +111,5 @@ jobs:
           git rm .updates/followup.patch.b64
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "feat: reuse server media and show photo sizes"
+          git commit -m "fix: complete advanced forward flow and slim settings"
           git push origin HEAD:main
