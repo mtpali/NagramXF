@@ -111,5 +111,5 @@ jobs:
           git rm .updates/followup.patch.b64
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "feat: set Telegram icon and armv7-only build"
+          git commit -m "feat: complete advanced forward and Persian defaults"
           git push origin HEAD:main
