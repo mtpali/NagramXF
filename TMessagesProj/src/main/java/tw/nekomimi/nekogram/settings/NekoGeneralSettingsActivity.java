@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.settings;
 
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -231,13 +231,13 @@ public class NekoGeneralSettingsActivity extends BaseNekoXSettingsActivity {
         if (num == 0) {
             txt = getString(R.string.UnifiedPushNeverReceivedNotifications);
         } else {
-            txt = LocaleController.formatString(
+            txt = NekoSettingsLocale.formatString(
                     R.string.UnifiedPushLastReceivedNotification,
                     (SystemClock.elapsedRealtime() - UnifiedPushService.getLastReceivedNotification()) / 1000,
                     num
             );
         }
-        txt += "\n\n" + LocaleController.formatString(R.string.UnifiedPushCurrentEndpoint, SharedConfig.pushString);
+        txt += "\n\n" + NekoSettingsLocale.formatString(R.string.UnifiedPushCurrentEndpoint, SharedConfig.pushString);
 
         showDialog(new AlertDialog.Builder(getParentActivity())
                 .setTitle(getString(R.string.PushServiceTypeUnified))

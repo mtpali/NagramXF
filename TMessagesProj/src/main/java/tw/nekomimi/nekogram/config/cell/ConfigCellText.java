@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.config.cell;
 
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import androidx.recyclerview.widget.RecyclerView;
 

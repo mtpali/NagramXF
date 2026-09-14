@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.settings;
 
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -475,7 +475,7 @@ public class NekoAyuSpySettingsActivity extends BaseNekoXSettingsActivity {
                 if (finalSuccess) {
                     AyuData.loadSizes(this::refreshAyuDataSize);
                     BulletinFactory.of(this).createSimpleBulletin(R.raw.done,
-                            LocaleController.formatString(R.string.ImportMergeResult, finalMergedCount)).show();
+                            NekoSettingsLocale.formatString(R.string.ImportMergeResult, finalMergedCount)).show();
                 } else {
                     BulletinFactory.of(this).createErrorBulletin(getString(R.string.ImportMessageDatabaseFailed)).show();
                 }
@@ -686,7 +686,7 @@ public class NekoAyuSpySettingsActivity extends BaseNekoXSettingsActivity {
         BulletinFactory bulletinFactory = BulletinFactory.canShowBulletin(this) ? BulletinFactory.of(this) : BulletinFactory.global();
         bulletinFactory.createSimpleBulletin(
                 R.raw.info,
-                LocaleController.formatString(R.string.AppWillRestartInSeconds, restartDelaySeconds),
+                NekoSettingsLocale.formatString(R.string.AppWillRestartInSeconds, restartDelaySeconds),
                 4,
                 TELEGRAM_DATABASE_RESTART_DELAY_MS
         ).show();

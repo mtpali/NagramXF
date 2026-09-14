@@ -41,6 +41,7 @@ public class AdvancedForwardActivity extends BaseFragment {
     private final ArrayList<MessageObject> messages;
     private final HashMap<String, EditTextBoldCursor> editors = new HashMap<>();
     private Delegate delegate;
+    private boolean submitting;
 
     public AdvancedForwardActivity(ArrayList<MessageObject> messages) {
         this.messages = new ArrayList<>(messages);
@@ -214,6 +215,10 @@ public class AdvancedForwardActivity extends BaseFragment {
     }
 
     private void submit() {
+        if (submitting) {
+            return;
+        }
+        submitting = true;
         HashMap<String, String> editedTexts = new HashMap<>();
         for (MessageObject message : messages) {
             String messageKey = getMessageKey(message);
@@ -223,9 +228,17 @@ public class AdvancedForwardActivity extends BaseFragment {
             }
         }
         Delegate currentDelegate = delegate;
-        finishFragment();
+        AndroidUtilities.hideKeyboard(fragmentView);
+        // Close synchronously before opening the dialogs picker. Presenting the
+        // picker while the editor's close animation is still running is rejected
+        // by ActionBarLayout, leaving the user with no destination selection.
+        boolean closed = finishFragment(false);
+        if (!closed) {
+            submitting = false;
+            return;
+        }
         if (currentDelegate != null) {
-            AndroidUtilities.runOnUIThread(() -> currentDelegate.onPrepared(editedTexts), 180);
+            currentDelegate.onPrepared(editedTexts);
         }
     }
 

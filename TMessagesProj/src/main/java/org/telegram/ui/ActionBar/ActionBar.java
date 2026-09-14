@@ -431,7 +431,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                     }
                 }
             }
-            if (NaConfig.INSTANCE.getForceSnowfall().Bool() || Theme.canStartHolidayAnimation()) {
+            if (Theme.canStartHolidayAnimation()) {
                 if (snowflakesEffect == null) {
                     snowflakesEffect = new SnowflakesEffect(0);
                     snowflakesEffect.occupyStatusBar = occupyStatusBar;

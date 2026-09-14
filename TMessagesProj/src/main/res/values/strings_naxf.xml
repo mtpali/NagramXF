@@ -121,7 +121,6 @@
     <string name="PeekOnlineUnavailable">Could not fetch exact online status.</string>
     <string name="PeekOnlineRestoreFailed">Failed to restore Last Seen privacy.</string>
     <string name="AppNavigation">App Navigation</string>
-    <string name="ShowRecentChatsSidebar">Show Recent Chats Sidebar</string>
     <string name="ForceForwardStatusSentCount">%1$d/%2$d</string>
     <string name="ForceForwardStatusChunkCount">chunk %1$d of %2$d</string>
     <string name="ForceForwardSomeSkipped">%1$d message(s) could not be forwarded</string>
@@ -154,8 +153,6 @@
     <string name="JoinDateChat">You joined **%1$s** on **%2$s**.</string>
     <string name="CreationDateUserApproximately">**%1$s** created their account approximately on **%2$s**.</string>
     <string name="CreationDateSelfApproximately">You created your account approximately on **%1$s**.</string>
-    <string name="ForceSnowfall">Force Snowfall</string>
-    <string name="ForceSnowfallInfo">Always show the snowfall effect on the title bar, side drawer and chat background, regardless of the date.</string>
     <string name="CameraType">Camera type</string>
     <string name="AlwaysSendInHD">Always Send in HD</string>
     <string name="ExtendedSettings">Extended Settings</string>

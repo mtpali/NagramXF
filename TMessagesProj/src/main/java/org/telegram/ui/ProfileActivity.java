@@ -10183,7 +10183,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             needTimerImage = type != 0;
             needStarImage = type != 0;
             updateStar();
-            if (preferences.getBoolean("view_animations", true)) {
+            if (preferences.getBoolean("view_animations", false)) {
                 playProfileAnimation = type;
             } else if (type == 2) {
                 expandPhoto = true;

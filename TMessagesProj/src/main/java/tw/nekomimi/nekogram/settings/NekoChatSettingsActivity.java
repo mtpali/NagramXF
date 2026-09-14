@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.settings;
 
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -107,10 +107,10 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
 
     private final CellGroup cellGroup = new CellGroup(this);
     private final String[] doubleTapSeekDurations = new String[]{
-            LocaleController.formatPluralString("Seconds", 5),
-            LocaleController.formatPluralString("Seconds", 10),
-            LocaleController.formatPluralString("Seconds", 15),
-            LocaleController.formatPluralString("Seconds", 30)
+            NekoSettingsLocale.formatPluralString("Seconds", 5),
+            NekoSettingsLocale.formatPluralString("Seconds", 10),
+            NekoSettingsLocale.formatPluralString("Seconds", 15),
+            NekoSettingsLocale.formatPluralString("Seconds", 30)
     };
 
     private final AbstractConfigCell stickerSizeRow = cellGroup.appendCell(new ConfigCellCustom("StickerSize", ConfigCellCustom.CUSTOM_ITEM_StickerSize, false));
@@ -488,7 +488,6 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
     private final AbstractConfigCell disableMarkdownRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getDisableMarkdown()));
     private final AbstractConfigCell disableProximityEventsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableProximityEvents));
     private final AbstractConfigCell rememberAllBackMessagesRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.rememberAllBackMessages));
-    private final AbstractConfigCell showRecentChatsSidebarRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getShowRecentChatsSidebar()));
     private final AbstractConfigCell typeMessageHintUseGroupNameRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getTypeMessageHintUseGroupName()));
     private final AbstractConfigCell showSendAsUnderMessageHintRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getShowSendAsUnderMessageHint()));
     private final AbstractConfigCell showQuickReplyInBotCommandsRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getShowQuickReplyInBotCommands()));
@@ -1008,7 +1007,7 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
             titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
             titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
-            titleView.setText(LocaleController.getString(R.string.StickerSize));
+            titleView.setText(NekoSettingsLocale.getString(R.string.StickerSize));
             titleView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             titleRow.addView(titleView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
 
@@ -1040,14 +1039,14 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
             leftTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
             leftTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             leftTextView.setGravity(Gravity.LEFT);
-            leftTextView.setText(LocaleController.getString(R.string.StickerSizeLeft));
+            leftTextView.setText(NekoSettingsLocale.getString(R.string.StickerSizeLeft));
             labelsRow.addView(leftTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL));
 
             rightTextView = new TextView(context);
             rightTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
             rightTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             rightTextView.setGravity(Gravity.RIGHT);
-            rightTextView.setText(LocaleController.getString(R.string.StickerSizeRight));
+            rightTextView.setText(NekoSettingsLocale.getString(R.string.StickerSizeRight));
             labelsRow.addView(rightTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL));
 
             addView(labelsRow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 21, 52, 21, 0));

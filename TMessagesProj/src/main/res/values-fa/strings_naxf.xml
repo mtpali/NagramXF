@@ -76,8 +76,6 @@
     <string name="ExtendedSettings">تنظیمات پیشرفته</string>
     <string name="ForceLTR">اجبار چیدمان چپ‌به‌راست</string>
     <string name="ForceLTRInfo">حتی با انتخاب فارسی، عربی، عبری یا زبان راست‌به‌چپ دیگر، کل چیدمان برنامه را چپ‌به‌راست نگه می‌دارد. نیازمند راه‌اندازی مجدد.</string>
-    <string name="ForceSnowfall">اجبار بارش برف</string>
-    <string name="ForceSnowfallInfo">جلوه بارش برف را بدون توجه به تاریخ، همیشه در نوار عنوان، منوی کناری و پس‌زمینه گفتگو نمایش می‌دهد.</string>
     <string name="HideAiEditor">پنهان‌کردن ویرایشگر هوش مصنوعی</string>
     <string name="HideAiSummary">پنهان‌کردن خلاصه هوش مصنوعی</string>
     <string name="HidePhotoCounter">پنهان‌کردن شمارنده عکس</string>
@@ -127,7 +125,6 @@
     <string name="RemoveMessageTail">حذف دنبالهٔ حباب پیام</string>
     <string name="SaveReadDate">ذخیره زمان خواندن</string>
     <string name="SendLockedCustomEmojiAsSticker">ارسال ایموجی پریمیوم به‌صورت استیکر</string>
-    <string name="ShowRecentChatsSidebar">نمایش گفتگوهای اخیر در نوار کناری</string>
     <string name="TabStyleStroke">ضخامت نشانگر زبانه</string>
     <string name="UseSystemAiService">استفاده از سرویس هوش مصنوعی سیستم</string>
     <string name="UserAvatarsInMessagePreview">تصویر کاربران در پیش‌نمایش پیام</string>

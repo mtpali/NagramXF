@@ -1,7 +1,7 @@
 package tw.nekomimi.nekogram.settings;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -109,7 +109,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
     private final AbstractConfigCell avatarCornersInfoRow = cellGroup.appendCell(new ConfigCellCustom("SingleCornerRadiusInfo", CellGroup.ITEM_TYPE_TEXT, false));
     private final AbstractConfigCell headerDialogs = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.DialogsSettings)));
     private final AbstractConfigCell chatListPreviewRow = cellGroup.appendCell(new ConfigCellCustom("ChatListPreview", ConfigCellCustom.CUSTOM_ITEM_ChatListPreview, false));
-    private final AbstractConfigCell forceSnowfallRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getForceSnowfall(), getString(R.string.ForceSnowfallInfo), getString(R.string.ForceSnowfall)));
     private final AbstractConfigCell centerActionBarTitleRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getCenterActionBarTitle(), null, getString(R.string.CenterActionBarTitleType)));
     private final AbstractConfigCell folderNameAsTitleRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getFolderNameAsTitle()));
     private final AbstractConfigCell customTitleUserNameRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getCustomTitleUserName()));
@@ -197,7 +196,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         List<AbstractConfigCell> dialogsBlock = Arrays.asList(
                 headerDialogs,
                 chatListPreviewRow,
-                forceSnowfallRow,
                 centerActionBarTitleRow,
                 folderNameAsTitleRow,
                 customTitleUserNameRow,
@@ -242,18 +240,7 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
                     && key.equals(NaConfig.INSTANCE.getFoldersAtBottom().getKey())) {
                 filterTabsPreviewCell.refresh();
             }
-            if (key.equals(NaConfig.INSTANCE.getForceSnowfall().getKey())) {
-                if (chatListPreviewCell != null) {
-                    chatListPreviewCell.invalidate();
-                }
-                if (getActionBar() != null) {
-                    getActionBar().invalidate();
-                }
-                if (listView != null) {
-                    listView.invalidate();
-                }
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.invalidateMotionBackground);
-            } else if (key.equals(NekoConfig.hideAllTab.getKey())
+            if (key.equals(NekoConfig.hideAllTab.getKey())
                     || key.equals(NaConfig.INSTANCE.getIgnoreUnreadCount().getKey())
                     || key.equals(NekoConfig.tabsTitleType.getKey())
                     || key.equals(NekoConfig.tabStyleStroke.getKey())) {

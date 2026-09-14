@@ -1079,7 +1079,7 @@ public class NotificationsController extends BaseController implements Notificat
 
             LongSparseArray<Boolean> settingsCache = new LongSparseArray<>();
             SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
-            boolean allowPinned = preferences.getBoolean("PinnedMessages", true);
+            boolean allowPinned = preferences.getBoolean("PinnedMessages", false);
             int popup = 0;
             boolean hasScheduled = false;
 

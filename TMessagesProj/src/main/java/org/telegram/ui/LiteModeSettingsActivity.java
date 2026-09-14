@@ -143,7 +143,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             } else if (item.viewType == VIEW_TYPE_SWITCH2) {
                 if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                    boolean animations = preferences.getBoolean("view_animations", true);
+                    boolean animations = preferences.getBoolean("view_animations", false);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean("view_animations", !animations);
                     SharedConfig.setAnimationsEnabled(!animations);
@@ -411,7 +411,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 TextCell textCell = (TextCell) holder.itemView;
                 if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                    boolean animations = preferences.getBoolean("view_animations", true);
+                    boolean animations = preferences.getBoolean("view_animations", false);
                     textCell.setTextAndCheck(item.text, animations, false);
                 }
             }

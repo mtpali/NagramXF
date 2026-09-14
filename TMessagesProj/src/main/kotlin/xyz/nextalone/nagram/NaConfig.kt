@@ -316,12 +316,6 @@ object NaConfig {
             ConfigItem.configTypeInt,
             1
         )
-    val forceSnowfall =
-        addConfig(
-            "ForceSnowfall",
-            ConfigItem.configTypeBool,
-            false
-        )
     val doNotUnarchiveBySwipe =
         addConfig(
             "DoNotUnarchiveBySwipe",
@@ -611,12 +605,6 @@ object NaConfig {
             "ShowQuickReplyInBotCommands",
             ConfigItem.configTypeBool,
             false
-        )
-    val showRecentChatsSidebar =
-        addConfig(
-            "ShowRecentChatsSidebar",
-            ConfigItem.configTypeBool,
-            true
         )
     val pushServiceType =
         addConfig(

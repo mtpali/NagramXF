@@ -1922,7 +1922,7 @@ public class SharedConfig {
 
     public static boolean animationsEnabled() {
         if (animationsEnabled == null) {
-            animationsEnabled = MessagesController.getGlobalMainSettings().getBoolean("view_animations", true);
+            animationsEnabled = MessagesController.getGlobalMainSettings().getBoolean("view_animations", false);
         }
         return animationsEnabled;
     }

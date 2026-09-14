@@ -1,7 +1,7 @@
 package tw.nekomimi.nekogram.config.cell;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.content.Context;
 import android.text.TextUtils;

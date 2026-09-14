@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.settings;
 
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -576,7 +576,7 @@ public class NekoEmojiSettingsActivity extends BaseNekoSettingsActivity implemen
                     mContext.startActivity(Intent.createChooser(intent, getString(R.string.ShareFile)));
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                    builder.setTitle(LocaleController.formatString(R.string.DeleteStickerSetsAlertTitle, LocaleController.formatString(R.string.DeleteEmojiSets, count)));
+                    builder.setTitle(NekoSettingsLocale.formatString(R.string.DeleteStickerSetsAlertTitle, NekoSettingsLocale.formatString(R.string.DeleteEmojiSets, count)));
                     builder.setMessage(getString(R.string.DeleteEmojiSetsMessage));
                     builder.setPositiveButton(getString(R.string.Delete), (dialog, which1) -> {
                         AlertDialog progressDialog = new AlertDialog(getParentActivity(), 3);

@@ -2,7 +2,7 @@ package tw.nekomimi.nekogram.settings;
 
 import static android.view.View.OVER_SCROLL_NEVER;
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.LocaleController.getString;
+import static tw.nekomimi.nekogram.settings.NekoSettingsLocale.getString;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

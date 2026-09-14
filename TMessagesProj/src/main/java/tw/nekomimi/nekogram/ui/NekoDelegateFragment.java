@@ -100,7 +100,7 @@ public abstract class NekoDelegateFragment extends BaseFragment implements Notif
     }
 
     protected void setupMessageListItemAnimator(@NonNull RecyclerListView listView) {
-        if (!MessagesController.getGlobalMainSettings().getBoolean("view_animations", true)) {
+        if (!MessagesController.getGlobalMainSettings().getBoolean("view_animations", false)) {
             if (listView.getItemAnimator() != null) {
                 listView.setItemAnimator(null);
             }
@@ -744,7 +744,7 @@ public abstract class NekoDelegateFragment extends BaseFragment implements Notif
     }
 
     private boolean shouldCaptureSnapshot(@NonNull ChatMessageCell messageCell) {
-        if (!MessagesController.getGlobalMainSettings().getBoolean("view_animations", true)) {
+        if (!MessagesController.getGlobalMainSettings().getBoolean("view_animations", false)) {
             return false;
         }
         return messageCell.getParent() instanceof RecyclerView;
@@ -792,7 +792,7 @@ public abstract class NekoDelegateFragment extends BaseFragment implements Notif
     }
 
     private void updateMessageCellAnimated(@NonNull ChatMessageCell messageCell, @NonNull MessageObject messageObject, @Nullable Bitmap snapshotBefore) {
-        final boolean animate = MessagesController.getGlobalMainSettings().getBoolean("view_animations", true);
+        final boolean animate = MessagesController.getGlobalMainSettings().getBoolean("view_animations", false);
         final RecyclerView recyclerView = messageCell.getParent() instanceof RecyclerView ? (RecyclerView) messageCell.getParent() : null;
 
         if (recyclerView != null) {

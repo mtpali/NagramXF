@@ -58,7 +58,6 @@ import org.telegram.ui.Components.Reactions.HwEmojis;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 
 import tw.nekomimi.nekogram.NekoConfig;
-import xyz.nextalone.nagram.NaConfig;
 
 public class DrawerProfileCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -361,7 +360,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     }
 
     private void updateHeaderDecoration() {
-        if (NaConfig.INSTANCE.getForceSnowfall().Bool() || Theme.getEventType() == 0) {
+        if (Theme.getEventType() == 0) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(0);
             }
