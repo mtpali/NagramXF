@@ -153,7 +153,7 @@ object NaConfig {
         addConfig(
             "NoQuoteForward",
             ConfigItem.configTypeBool,
-            false
+            true
         )
     val showRepeatAsCopy =
         addConfig(

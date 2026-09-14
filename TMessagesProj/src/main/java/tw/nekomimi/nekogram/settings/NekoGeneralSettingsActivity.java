@@ -356,11 +356,11 @@ public class NekoGeneralSettingsActivity extends BaseNekoXSettingsActivity {
         if (NaConfig.INSTANCE.getSaveToChatSubfolder().Bool()) {
             folderName = TextUtils.isEmpty(folderName) ? "<chat_name>" : folderName + File.separator + "<chat_name>";
         }
-        return buildCustomSaveAbsolutePath(Environment.DIRECTORY_DOWNLOADS, folderName);
+        return buildCustomSaveAbsolutePath(folderName);
     }
 
-    private String buildCustomSaveAbsolutePath(String directory, String folderName) {
-        File root = Environment.getExternalStoragePublicDirectory(directory);
+    private String buildCustomSaveAbsolutePath(String folderName) {
+        File root = Environment.getExternalStorageDirectory();
         if (TextUtils.isEmpty(folderName)) {
             return root.getAbsolutePath();
         }

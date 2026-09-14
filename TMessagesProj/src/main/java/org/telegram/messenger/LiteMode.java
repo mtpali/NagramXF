@@ -200,14 +200,7 @@ public class LiteMode {
     }
 
     public static void loadPreference() {
-        int defaultValue = PRESET_HIGH, batteryDefaultValue = BATTERY_HIGH;
-        if (SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_LOW) {
-            defaultValue = PRESET_LOW;
-            batteryDefaultValue = BATTERY_LOW;
-        } else if (SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_AVERAGE) {
-            defaultValue = PRESET_MEDIUM;
-            batteryDefaultValue = BATTERY_MEDIUM;
-        }
+        int defaultValue = PRESET_POWER_SAVER, batteryDefaultValue = 0;
 
         final SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         if (!preferences.contains("lite_mode6")) {

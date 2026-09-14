@@ -64,7 +64,6 @@ import java.util.UUID;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.helpers.AppRestartHelper;
 import tw.nekomimi.nekogram.helpers.CloudSettingsHelper;
-import tw.nekomimi.nekogram.helpers.PasscodeHelper;
 import tw.nekomimi.nekogram.helpers.SettingsBackupHelper;
 import tw.nekomimi.nekogram.helpers.SettingsHelper;
 import tw.nekomimi.nekogram.helpers.SettingsSearchResult;
@@ -87,7 +86,6 @@ public class NekoSettingsActivity extends BaseNekoSettingsActivity {
     private int translatorRow;
     private int chatRow;
     private int pluginsRow;
-    private int passcodeRow;
     private int experimentRow;
     private int categoriesEndRow;
     private int cloudSyncRow;
@@ -108,11 +106,6 @@ public class NekoSettingsActivity extends BaseNekoSettingsActivity {
             pluginsRow = addRow();
         } else {
             pluginsRow = -1;
-        }
-        if (!PasscodeHelper.isSettingsHidden()) {
-            passcodeRow = addRow();
-        } else {
-            passcodeRow = -1;
         }
         experimentRow = addRow();
         categoriesEndRow = addRow();
@@ -404,8 +397,6 @@ public class NekoSettingsActivity extends BaseNekoSettingsActivity {
             presentFragment(new NekoAyuMomentsSettingsActivity());
         } else if (position == pluginsRow) {
             presentFragment(new PluginsActivity());
-        } else if (position == passcodeRow) {
-            presentFragment(new NekoPasscodeSettingsActivity());
         } else if (position == experimentRow) {
             presentFragment(new NekoExperimentalSettingsActivity());
         } else if (position == cloudSyncRow) {
@@ -450,8 +441,6 @@ public class NekoSettingsActivity extends BaseNekoSettingsActivity {
                         textCell.setTextAndIcon(getString(R.string.TranslatorSettings), R.drawable.ic_translate, true);
                     } else if (position == pluginsRow) {
                         textCell.setTextAndIcon(getString(R.string.Plugins), R.drawable.msg_plugins, true);
-                    } else if (position == passcodeRow) {
-                        textCell.setTextAndIcon(getString(R.string.PasscodeNeko), R.drawable.msg_permissions, true);
                     } else if (position == experimentRow) {
                         textCell.setTextAndIcon(getString(R.string.Experimental), R.drawable.msg_fave, true);
                     } else if (position == cloudSyncRow) {
@@ -469,7 +458,7 @@ public class NekoSettingsActivity extends BaseNekoSettingsActivity {
         public int getItemViewType(int position) {
             if (position == categoriesEndRow || position == cloudSyncEndRow) {
                 return TYPE_SHADOW;
-            } else if (position == chatRow || position == generalRow || position == appearanceRow || position == ayuMomentsRow || position == pluginsRow || position == passcodeRow || position == experimentRow || position == cloudSyncRow || position == translatorRow || position == aboutRow) {
+            } else if (position == chatRow || position == generalRow || position == appearanceRow || position == ayuMomentsRow || position == pluginsRow || position == experimentRow || position == cloudSyncRow || position == translatorRow || position == aboutRow) {
                 return TYPE_TEXT;
             }
             return TYPE_SHADOW;

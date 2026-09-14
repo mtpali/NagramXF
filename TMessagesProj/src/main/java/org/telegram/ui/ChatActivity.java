@@ -11202,8 +11202,8 @@ public class ChatActivity extends BaseFragment implements
         boolean noforward = getMessagesController().isChatNoForwards(currentChat);
         actionModeViews.add(actionModeOtherItem = actionMode.addItemWithWidth(nkactionbarbtn_action_mode_other, R.drawable.ic_ab_other, AndroidUtilities.dp(54), LocaleController.getString(R.string.MessageMenu)));
 
-        if (currentEncryptedChat == null && !noforward) {
-            actionModeOtherItem.addSubItem(nkbtn_forward_noquote, R.drawable.msg_forward_noquote, LocaleController.getString(R.string.NoQuoteForward));
+        if (currentEncryptedChat == null) {
+            actionModeOtherItem.addSubItem(nkbtn_forward_noquote, R.drawable.msg_forward_noquote, LocaleController.getString(R.string.AdvancedForward));
         }
         actionModeOtherItem.addSubItem(nkbtn_translate, LlmConfig.llmIsDefaultProvider() ? R.drawable.magic_stick : R.drawable.ic_translate, LocaleController.getString(R.string.Translate));
         actionModeOtherItem.addSubItem(nkbtn_sharemessage, R.drawable.msg_shareout, LocaleController.getString(R.string.ShareMessages));
@@ -13333,7 +13333,7 @@ public class ChatActivity extends BaseFragment implements
 
     public void openForward(boolean fromActionBar) {
         boolean hasSelectedAyuDeletedMessage = hasSelectedAyuDeletedMessage();
-        if (hasSelectedAyuDeletedMessage && canForwardMessagesCount == 0) {
+        if (advancedForwardTexts == null && hasSelectedAyuDeletedMessage && canForwardMessagesCount == 0) {
             // We should update text if user changed locale without re-opening chat activity
             String str;
             if (isPeerNoForwards()) {
@@ -13409,7 +13409,7 @@ public class ChatActivity extends BaseFragment implements
         Bundle args = new Bundle();
         args.putBoolean("onlySelect", true);
         args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-        args.putInt("messagesCount", canForwardMessagesCount);
+        args.putInt("messagesCount", advancedForwardTexts != null ? getMessagesForAdvancedForward().size() : canForwardMessagesCount);
         args.putInt("hasPoll", hasPoll);
         args.putBoolean("hasInvoice", hasInvoice);
         args.putBoolean("canSelectTopics", true);
@@ -20656,7 +20656,8 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 if (forwardNoQuoteItem != null) {
-                    forwardNoQuoteItem.setVisibility(canForward && NaConfig.INSTANCE.getShowNoQuoteForward().Bool());
+                    boolean canAdvancedForward = chatMode != MODE_SCHEDULED && selectedCount > 0 && currentEncryptedChat == null;
+                    forwardNoQuoteItem.setVisibility(canAdvancedForward && NaConfig.INSTANCE.getShowNoQuoteForward().Bool());
                 }
                 if (saveMessageItem != null) {
                     saveMessageItem.setVisibility(canForward);
@@ -50676,8 +50677,8 @@ public class ChatActivity extends BaseFragment implements
                 // --- NagramX Start ---
                 if (chatMode != MODE_SCHEDULED) {
                     if (!selectedObject.needDrawBluredPreview() && !selectedObject.isLiveLocation() && selectedObject.type != 16) {
-                        if (!noforwards && NaConfig.INSTANCE.getShowNoQuoteForward().Bool()) {
-                            items.add(LocaleController.getString(R.string.NoQuoteForward));
+                        if (NaConfig.INSTANCE.getShowNoQuoteForward().Bool()) {
+                            items.add(LocaleController.getString(R.string.AdvancedForward));
                             options.add(nkbtn_forward_noquote);
                             icons.add(R.drawable.msg_forward_noquote);
                         }

@@ -309,6 +309,7 @@
     <string name="AdvancedForward">Advanced forward</string>
     <string name="AdvancedForwardText">Text or caption</string>
     <string name="AdvancedForwardHint">Edit before sending</string>
+    <string name="AdvancedForwardHelp">Edit the text or media caption, then tap Next and choose one or more chats. Each message is sent as a new copy without the original sender.</string>
     <string name="AdvancedForwardNoText">This message has no editable text. Continue to send it without attribution.</string>
     <string name="ForceLTR">Force left-to-right layout</string>
     <string name="ForceLTRInfo">Keep the entire app layout left-to-right even when Persian, Arabic, Hebrew, or another RTL language is selected. Restart required.</string>

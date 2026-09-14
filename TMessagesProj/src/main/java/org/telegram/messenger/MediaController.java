@@ -5185,7 +5185,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                         if (isMusic) {
                             dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                         } else {
-                            dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                            dir = Environment.getExternalStorageDirectory();
                         }
                         if (!TextUtils.isEmpty(folderName)) {
                             dir = new File(dir, folderName);
@@ -5581,7 +5581,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                         } else {
                             File dir;
                             if (type == 2) {
-                                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                dir = Environment.getExternalStorageDirectory();
                             } else {
                                 dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                             }
@@ -5890,7 +5890,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 if (filename == null) {
                     filename = sourceFile.getName();
                 }
-                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, folderName);
+                File dirDest = new File(folderName);
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                 uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                 contentValues.put(MediaStore.Downloads.DISPLAY_NAME, filename);

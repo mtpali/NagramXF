@@ -33,7 +33,6 @@ import tw.nekomimi.nekogram.settings.NekoChatSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoEmojiSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoExperimentalSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoGeneralSettingsActivity;
-import tw.nekomimi.nekogram.settings.NekoPasscodeSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoTranslatorSettingsActivity;
 import tw.nekomimi.nekogram.settings.SidebarMenuActivity;
@@ -56,8 +55,6 @@ public class SettingsHelper {
         BaseNekoXSettingsActivity nekox_fragment = null;
         if (segments.size() == 1) {
             fragment = new NekoSettingsActivity();
-        } else if (PasscodeHelper.getSettingsKey().equals(segments.get(1))) {
-            fragment = neko_fragment = new NekoPasscodeSettingsActivity();
         } else {
             switch (segments.get(1)) {
                 case "about":
@@ -234,11 +231,6 @@ public class SettingsHelper {
                 R.string.DrawerElements, R.string.HomeDrawer, "navigationDrawerEnabled", R.drawable.menu_newfilter);
         addSearchRow(items, callback, PillStackPreferencesActivity::new, PillStackPreferencesActivity.class,
                 R.string.PillStackPills, R.string.PillStackInfiniteScrolling, "pillStackInfiniteScrolling", R.drawable.ic_ab_search);
-        if (!PasscodeHelper.isSettingsHidden()) {
-            items.add(new SettingsSearchResult(searchGuid(NekoPasscodeSettingsActivity.class, "", 0),
-                    getString(R.string.PasscodeNeko), n_title, null, R.drawable.msg_secret,
-                    () -> callback.presentFragment(new NekoPasscodeSettingsActivity())));
-        }
         return items;
     }
 
