@@ -190,6 +190,9 @@ public class AdvancedForwardActivity extends BaseFragment {
         if (message.isVoice()) {
             return getString(R.string.AttachAudio) + " · " + getString(R.string.AdvancedForwardText);
         }
+        if (message.isMusic()) {
+            return getString(R.string.AttachMusic) + " · " + getString(R.string.AdvancedForwardText);
+        }
         if (message.getDocument() != null) {
             return getString(R.string.AttachDocument) + " · " + getString(R.string.AdvancedForwardText);
         }

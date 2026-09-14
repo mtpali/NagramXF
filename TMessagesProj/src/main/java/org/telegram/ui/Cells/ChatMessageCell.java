@@ -9974,6 +9974,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (messageObject.type == MessageObject.TYPE_PHOTO || messageObject.type == MessageObject.TYPE_EXTENDED_MEDIA_PREVIEW) { // photo
                         updateSecretTimeText(messageObject);
                         currentPhotoObjectThumb = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, 40);
+                        if (messageObject.type == MessageObject.TYPE_PHOTO && !messageObject.needDrawBluredPreview()) {
+                            long photoSize = getPhotoDownloadSize(messageObject);
+                            if (photoSize > 0) {
+                                String photoInfo = LocaleController.getString(R.string.AttachPhoto) + ", " + AndroidUtilities.formatFileSize(photoSize);
+                                infoWidth = (int) Math.ceil(Theme.chat_infoPaint.measureText(photoInfo));
+                                infoLayout = new StaticLayout(photoInfo, Theme.chat_infoPaint, infoWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                            }
+                        }
                     } else if (messageObject.type == MessageObject.TYPE_VIDEO || messageObject.type == MessageObject.TYPE_GIF) {
                         createDocumentLayout(0, messageObject);
                         currentPhotoObjectThumb = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, 40);
@@ -13043,6 +13051,24 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             return width;
         }
+    }
+
+    private long getPhotoDownloadSize(MessageObject messageObject) {
+        if (messageObject == null || messageObject.photoThumbs == null) {
+            return 0;
+        }
+        long result = 0;
+        for (int i = 0; i < messageObject.photoThumbs.size(); i++) {
+            TLRPC.PhotoSize size = messageObject.photoThumbs.get(i);
+            if (size == null
+                    || size instanceof TLRPC.TL_photoSizeEmpty
+                    || size instanceof TLRPC.TL_photoPathSize
+                    || size instanceof TLRPC.TL_photoStrippedSize) {
+                continue;
+            }
+            result = Math.max(result, size.size);
+        }
+        return result;
     }
 
     private void calcBackgroundWidth(int maxWidth, int timeMore, int maxChildWidth) {
@@ -25468,17 +25494,24 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     int mask = MessageObject.POSITION_FLAG_LEFT | MessageObject.POSITION_FLAG_RIGHT;
                     fullWidth = (currentPosition.flags & mask) == mask;
                 }
-                if (((documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) && (buttonState == 1 || buttonState == 2 || buttonState == 0 || buttonState == 3 || buttonState == -1) || currentMessageObject.needDrawBluredPreview()) && !currentMessageObject.isRepostVideoPreview) {
+                boolean showPhotoSizeBeforeDownload = currentMessageObject.type == MessageObject.TYPE_PHOTO
+                        && infoLayout != null
+                        && !currentMessageObject.mediaExists
+                        && !currentMessageObject.attachPathExists;
+                if (((documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) && (buttonState == 1 || buttonState == 2 || buttonState == 0 || buttonState == 3 || buttonState == -1) || currentMessageObject.needDrawBluredPreview() || showPhotoSizeBeforeDownload) && !currentMessageObject.isRepostVideoPreview) {
                     if (autoPlayingMedia) {
                         updatePlayingMessageProgress();
                     }
 
-                    if ((infoLayout != null || loadingProgressLayout != null) && (!forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (loadingProgressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1)))) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
+                    if ((infoLayout != null || loadingProgressLayout != null) && (showPhotoSizeBeforeDownload || !forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (loadingProgressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1)))) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
                         boolean drawLoadingProgress;
                         float alpha = 0;
                         boolean drawDocTitleLayout;
                         float loadingProgressAlpha = 1f;
-                        if (!fullWidth) {
+                        if (showPhotoSizeBeforeDownload) {
+                            drawLoadingProgress = false;
+                            drawDocTitleLayout = false;
+                        } else if (!fullWidth) {
                             drawLoadingProgress = true;
                             drawDocTitleLayout = false;
                             loadingProgressAlpha = animatingLoadingProgressProgress;

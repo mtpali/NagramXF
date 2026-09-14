@@ -107,4 +107,6 @@
     <string name="PushServiceTypeFCM">Google FCM</string>
     <string name="PushServiceTypeMicroG">microG</string>
     <string name="PushServiceTypeUnified">UnifiedPush</string>
+    <string name="PushServiceTypeUnifiedGateway">درگاه UnifiedPush</string>
+    <string name="RegexFiltersEnabled">فعال‌کردن فیلتر پیام‌ها</string>
 </resources>

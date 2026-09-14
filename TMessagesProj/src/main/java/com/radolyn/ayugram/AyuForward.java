@@ -398,6 +398,48 @@ public class AyuForward {
         boolean waitForMessage = groupState.groupToken == null || groupState.finalItem;
         boolean waitForUpload = groupState.groupToken == null;
         Long groupToken = groupState.groupToken;
+
+        if (canReuseServerMedia(messageObject)) {
+            SendMessagesHelper.SendMessageParams params;
+            if (document != null) {
+                updateForwardingState(groupToken != null
+                        ? LocaleController.getString(R.string.ForceForwardStatusDocumentGroup)
+                        : LocaleController.getString(R.string.ForceForwardStatusDocumentCopy));
+                params = buildServerDocumentParams(
+                        messageObject,
+                        (TLRPC.TL_document) document,
+                        hideCaption ? null : sourceText,
+                        hideCaption ? null : entities,
+                        targetDialogId,
+                        notify,
+                        scheduleDate,
+                        groupToken,
+                        groupState.finalItem,
+                        hasMediaSpoilers,
+                        invertMedia
+                );
+            } else {
+                String caption = textWasEdited ? sourceText : (TextUtils.isEmpty(photo.caption) ? sourceText : photo.caption);
+                updateForwardingState(groupToken != null
+                        ? LocaleController.getString(R.string.ForceForwardStatusMediaGroup)
+                        : LocaleController.getString(R.string.ForceForwardStatusPhotoCopy));
+                params = buildServerPhotoParams(
+                        messageObject,
+                        (TLRPC.TL_photo) photo,
+                        hideCaption ? null : caption,
+                        hideCaption ? null : entities,
+                        targetDialogId,
+                        notify,
+                        scheduleDate,
+                        groupToken,
+                        groupState.finalItem,
+                        hasMediaSpoilers,
+                        invertMedia
+                );
+            }
+            return dispatchParamsSync(params, null, targetDialogId, payStars, waitForMessage, false);
+        }
+
         File file = resolveExistingFile(messageObject);
 
         if (document != null) {
@@ -513,11 +555,26 @@ public class AyuForward {
             MessageObject messageObject = messages.get(i);
             if (messageObject != null
                     && (fullAyuForwardsNeeded || AyuMessageUtils.isUnforwardable(messageObject))
+                    && !canReuseServerMedia(messageObject)
                     && AyuMessageUtils.isMediaDownloadable(messageObject, false)) {
                 result.add(messageObject);
             }
         }
         return result;
+    }
+
+    private boolean canReuseServerMedia(MessageObject messageObject) {
+        if (messageObject == null || messageObject.messageOwner == null || messageObject.isSecretMedia()) {
+            return false;
+        }
+        TLRPC.Document document = messageObject.getDocument();
+        if (document instanceof TLRPC.TL_document) {
+            return document.id != 0 && document.access_hash != 0;
+        }
+        TLRPC.Photo photo = MessageObject.getPhoto(messageObject.messageOwner);
+        return photo instanceof TLRPC.TL_photo
+                && photo.id != 0
+                && photo.access_hash != 0;
     }
 
     private boolean hasUndownloadedAyuDeletedMedia(ArrayList<MessageObject> messages) {
@@ -734,6 +791,54 @@ public class AyuForward {
 
     private HashMap<String, String> buildGroupedParams(Long groupToken, boolean finalItem) {
         return groupToken != null ? mapper.createGroupedParams(groupToken, finalItem) : null;
+    }
+
+    private SendMessagesHelper.SendMessageParams buildServerPhotoParams(MessageObject messageObject, TLRPC.TL_photo photo, String caption, ArrayList<TLRPC.MessageEntity> entities, long targetDialogId, boolean notify, int scheduleDate, Long groupToken, boolean finalItem, boolean hasMediaSpoilers, boolean invertMedia) {
+        SendMessagesHelper.SendMessageParams sendParams = SendMessagesHelper.SendMessageParams.of(
+                photo,
+                null,
+                targetDialogId,
+                replyToTopMessage,
+                replyToTopMessage,
+                TextUtils.isEmpty(caption) ? null : caption,
+                entities,
+                null,
+                buildGroupedParams(groupToken, finalItem),
+                notify,
+                scheduleDate,
+                0,
+                0,
+                messageObject,
+                false,
+                hasMediaSpoilers
+        );
+        sendParams.invert_media = invertMedia;
+        return sendParams;
+    }
+
+    private SendMessagesHelper.SendMessageParams buildServerDocumentParams(MessageObject messageObject, TLRPC.TL_document document, String caption, ArrayList<TLRPC.MessageEntity> entities, long targetDialogId, boolean notify, int scheduleDate, Long groupToken, boolean finalItem, boolean hasMediaSpoilers, boolean invertMedia) {
+        SendMessagesHelper.SendMessageParams sendParams = SendMessagesHelper.SendMessageParams.of(
+                document,
+                null,
+                null,
+                targetDialogId,
+                replyToTopMessage,
+                replyToTopMessage,
+                TextUtils.isEmpty(caption) ? null : caption,
+                entities,
+                null,
+                buildGroupedParams(groupToken, finalItem),
+                notify,
+                scheduleDate,
+                0,
+                0,
+                messageObject,
+                null,
+                false,
+                hasMediaSpoilers
+        );
+        sendParams.invert_media = invertMedia;
+        return sendParams;
     }
 
     private SendMessagesHelper.SendMessageParams buildOriginalPhotoParams(TLRPC.Photo sourcePhoto, File file, String caption, ArrayList<TLRPC.MessageEntity> entities, long targetDialogId, boolean notify, int scheduleDate, Long groupToken, boolean finalItem, boolean hasMediaSpoilers, boolean invertMedia) {
