@@ -364,8 +364,11 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             return new Item(nkbtnBookmarks, LocaleController.getString(R.string.BookmarksManager), R.drawable.msg_fave);
         } else if (id == 8) {
             return new Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings_old);
+        } else if (id == 13) {
+            return new Item(13, LocaleController.getString(R.string.ProxySettings),
+                    SharedConfig.isProxyEnabled() ? R.drawable.proxy_on : R.drawable.proxy_off);
         } else if (id == nkbtnSettings) {
-            return new Item(nkbtnSettings, LocaleController.getString(R.string.NekoSettings), R.drawable.telegram_logo);
+            return new Item(nkbtnSettings, LocaleController.getString(R.string.NekoSettings), R.drawable.msg_settings);
         } else if (id == nkbtnBrowser) {
             return new Item(nkbtnBrowser, LocaleController.getString(R.string.InappBrowser), R.drawable.web_browser);
         } else if (id == nkbtnQrLogin) {

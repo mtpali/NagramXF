@@ -28,6 +28,7 @@ object DrawerMenuHelper {
     const val ID_SETTINGS = 8
     const val ID_CALLS = 10
     const val ID_SAVED = 11
+    const val ID_PROXY = 13
     const val ID_EMOJI_STATUS = 15
     const val ID_MY_PROFILE = 16
 
@@ -52,7 +53,8 @@ object DrawerMenuHelper {
         Entry(ID_SAVED, R.string.SavedMessages, R.drawable.msg_saved),
         Entry(DrawerLayoutAdapter.nkbtnBookmarks, R.string.BookmarksManager, R.drawable.msg_fave),
         Entry(ID_SETTINGS, R.string.Settings, R.drawable.msg_settings_old),
-        Entry(DrawerLayoutAdapter.nkbtnSettings, R.string.NekoSettings, R.drawable.telegram_logo),
+        Entry(ID_PROXY, R.string.ProxySettings, R.drawable.proxy_on),
+        Entry(DrawerLayoutAdapter.nkbtnSettings, R.string.NekoSettings, R.drawable.msg_settings),
         Entry(DrawerLayoutAdapter.nkbtnBrowser, R.string.InappBrowser, R.drawable.web_browser),
         Entry(DrawerLayoutAdapter.nkbtnQrLogin, R.string.ImportLogin, R.drawable.msg_qrcode),
         Entry(DrawerLayoutAdapter.nkbtnSessions, R.string.Devices, R.drawable.msg2_devices),
@@ -79,7 +81,7 @@ object DrawerMenuHelper {
     @JvmStatic
     fun defaultHidden(): MutableList<Int> = mutableListOf(
         DrawerLayoutAdapter.nkbtnArchivedChats, ID_NEW_CHANNEL,
-        DrawerLayoutAdapter.nkbtnBookmarks, DrawerLayoutAdapter.nkbtnBrowser,
+        DrawerLayoutAdapter.nkbtnBookmarks, ID_PROXY, DrawerLayoutAdapter.nkbtnBrowser,
         DrawerLayoutAdapter.nkbtnQrLogin, DrawerLayoutAdapter.nkbtnSessions,
         DrawerLayoutAdapter.nkbtnMainTabsCustomize, DrawerLayoutAdapter.nkbtnRestartApp,
         DrawerLayoutAdapter.nkbtnFeed
@@ -178,6 +180,7 @@ object DrawerMenuHelper {
         put(ID_SAVED, NaConfig.drawerItemSaved.Bool())
         put(DrawerLayoutAdapter.nkbtnBookmarks, NaConfig.showAddToBookmark.Bool())
         put(ID_SETTINGS, NaConfig.drawerItemSettings.Bool())
+        put(ID_PROXY, false)
         put(DrawerLayoutAdapter.nkbtnSettings, NaConfig.drawerItemNSettings.Bool())
         put(DrawerLayoutAdapter.nkbtnBrowser, NaConfig.drawerItemBrowser.Bool())
         put(DrawerLayoutAdapter.nkbtnQrLogin, NaConfig.drawerItemQrLogin.Bool())

@@ -173,8 +173,6 @@ public class NekoConfig {
     public static ConfigItem noPreloadTrackIfRepeatOne = addConfig("NoPreloadTrackIfRepeatOne", configTypeBool, false);
 
     public static ConfigItem customAudioBitrate = addConfig("customAudioBitrate", configTypeInt, 32);
-    public static ConfigItem enhancedFileLoader = addConfig("enhancedFileLoader", configTypeBool, false);
-    public static ConfigItem uploadBoost = addConfig("uploadBoost", configTypeBool, false);
     public static ConfigItem useOpenFreeMap = addConfig("useOpenFreeMap", configTypeBool, true);
 
     public static ConfigItem localPremium = addConfig("localPremium", configTypeBool, false);

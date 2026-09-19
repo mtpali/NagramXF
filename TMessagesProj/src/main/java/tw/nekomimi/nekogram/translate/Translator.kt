@@ -70,7 +70,6 @@ interface Translator {
         const val providerDeepL = 7
         const val providerTelegram = 8
         const val providerTranSmart = 9
-        const val providerLLMTranslator = 10
 
         @JvmStatic
         fun getInputTranslateLangForChat(chatId: Long): String {
@@ -148,51 +147,6 @@ interface Translator {
                         to, query, entities, NekoConfig.translationProvider.Int()
                     )
 
-                    AndroidUtilities.runOnUIThread { translateCallBack.onSuccess(result) }
-                }.onFailure {
-                    AndroidUtilities.runOnUIThread {
-                        translateCallBack.onFailed(
-                            it is UnsupportedOperationException,
-                            it.message ?: it.javaClass.simpleName
-                        )
-                    }
-                }
-            }
-        }
-
-        @JvmStatic
-        fun translateWithContext(
-            to: Locale,
-            query: String,
-            entities: ArrayList<TLRPC.MessageEntity>,
-            context: String?,
-            translateCallBack: TranslateCallBack2
-        ) {
-            translateWithContext(
-                to,
-                query,
-                entities,
-                context,
-                getBulkTranslateProvider(NekoConfig.translationProvider.Int()),
-                translateCallBack
-            )
-        }
-
-        @JvmStatic
-        fun translateWithContext(
-            to: Locale,
-            query: String,
-            entities: ArrayList<TLRPC.MessageEntity>,
-            context: String?,
-            provider: Int,
-            translateCallBack: TranslateCallBack2
-        ) {
-            AppScope.io.launch {
-                runCatching {
-                    val effectiveProvider = provider.takeIf { it != 0 } ?: NekoConfig.translationProvider.Int()
-                    val result = LLMTranslator.withTranslationContext(context) {
-                        translateBase(to, query, entities, effectiveProvider)
-                    }
                     AndroidUtilities.runOnUIThread { translateCallBack.onSuccess(result) }
                 }.onFailure {
                     AndroidUtilities.runOnUIThread {
@@ -311,7 +265,6 @@ interface Translator {
                 providerDeepL -> DeepLTranslator
                 providerTelegram -> TelegramAPITranslator
                 providerTranSmart -> TranSmartTranslator
-                providerLLMTranslator -> LLMTranslator
                 else -> throw IllegalArgumentException()
             }
 
@@ -335,7 +288,6 @@ interface Translator {
                     ProviderInfo(providerDeepL, R.string.ProviderDeepLTranslate),
                     ProviderInfo(providerTelegram, R.string.ProviderTelegramAPI),
                     ProviderInfo(providerTranSmart, R.string.ProviderTranSmartTranslate),
-                    ProviderInfo(providerLLMTranslator, R.string.ProviderLLMTranslator),
                 )
             }
         }

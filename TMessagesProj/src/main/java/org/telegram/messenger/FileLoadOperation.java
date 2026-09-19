@@ -31,7 +31,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
-import tw.nekomimi.nekogram.NekoConfig;
 
 public class FileLoadOperation {
 
@@ -288,7 +287,7 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-        if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams || NekoConfig.enhancedFileLoader.Bool()) && !forceSmallChunk) {
+        if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
             downloadChunkSizeBig = 1024 * 512;
             maxDownloadRequests = 8;
             maxDownloadRequestsBig = 8;

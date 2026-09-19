@@ -4800,6 +4800,24 @@ public class AndroidUtilities {
             textView.setGravity(Gravity.CENTER);
         }
 
+        final LinearLayout buttonsLayout = new LinearLayout(activity);
+        buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.addView(buttonsLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.FILL_HORIZONTAL, 10, 18, 10, 14));
+
+        final ButtonWithCounterView addButtonView = new ButtonWithCounterView(activity, null).setRound();
+        addButtonView.setText(getString(R.string.ProxyAddOnly));
+        addButtonView.setOnClickListener(v -> {
+            int p = Utilities.parseInt(port);
+            SharedConfig.ProxyInfo info = TextUtils.isEmpty(secret)
+                    ? new SharedConfig.ProxyInfo(address, p, user, password, "")
+                    : new SharedConfig.ProxyInfo(address, p, "", "", secret);
+            SharedConfig.addProxy(info);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+            showProxyAddedBulletin(activity);
+            dismiss.run();
+        });
+        buttonsLayout.addView(addButtonView, LayoutHelper.createLinear(0, 48, 1f, Gravity.NO_GRAVITY, 4, 0, 4, 0));
+
         final ButtonWithCounterView buttonView = new ButtonWithCounterView(activity, null).setRound();
         buttonView.setText(getString(R.string.ConnectingConnectProxy));
         buttonView.setOnClickListener(v -> {
@@ -4835,28 +4853,27 @@ public class AndroidUtilities {
 
             ConnectionsManager.setProxySettings(true, address, p, user, password, secret);
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-            if (activity instanceof LaunchActivity) {
-                INavigationLayout layout = ((LaunchActivity) activity).getActionBarLayout();
-                BaseFragment fragment = layout.getLastFragment();
-                boolean bulletinSent = false;
-                if (fragment instanceof ChatActivity) {
-                    UndoView undoView = ((ChatActivity) fragment).getUndoView();
-                    if (undoView != null) {
-                        undoView.showWithAction(0, UndoView.ACTION_PROXY_ADDED, null);
-                        bulletinSent = true;
-                    }
-                }
-                if (!bulletinSent) {
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_SUCCESS, getString(R.string.ProxyAddedSuccess));
-                }
-            } else {
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_SUCCESS, getString(R.string.ProxyAddedSuccess));
-            }
+            showProxyAddedBulletin(activity);
             dismiss.run();
         });
-        linearLayout.addView(buttonView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.FILL_HORIZONTAL, 14, 18, 14, 14));
+        buttonsLayout.addView(buttonView, LayoutHelper.createLinear(0, 48, 1f, Gravity.NO_GRAVITY, 4, 0, 4, 0));
 
         builder.show();
+    }
+
+    private static void showProxyAddedBulletin(Activity activity) {
+        if (activity instanceof LaunchActivity) {
+            INavigationLayout layout = ((LaunchActivity) activity).getActionBarLayout();
+            BaseFragment fragment = layout.getLastFragment();
+            if (fragment instanceof ChatActivity) {
+                UndoView undoView = ((ChatActivity) fragment).getUndoView();
+                if (undoView != null) {
+                    undoView.showWithAction(0, UndoView.ACTION_PROXY_ADDED, null);
+                    return;
+                }
+            }
+        }
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_SUCCESS, getString(R.string.ProxyAddedSuccess));
     }
 
     @SuppressLint("PrivateApi")

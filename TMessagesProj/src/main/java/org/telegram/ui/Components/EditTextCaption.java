@@ -68,7 +68,6 @@ import java.util.List;
 import java.util.Locale;
 
 import tw.nekomimi.nekogram.helpers.ChatsHelper;
-import tw.nekomimi.nekogram.llm.LlmConfig;
 import tw.nekomimi.nekogram.translate.Translator;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 
@@ -405,9 +404,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
         final int end = Math.min(editable.length(), Math.max(selectionStart, selectionEnd));
         final String query = (start == end ? editable : editable.subSequence(start, end)).toString();
 
-        int provider = LlmConfig.isLLMTranslatorAvailable() ? Translator.providerLLMTranslator : 0;
-
-        Translator.translate(toLocale, query, provider, new Translator.Companion.TranslateCallBack() {
+        Translator.translate(toLocale, query, 0, new Translator.Companion.TranslateCallBack() {
             AlertDialog status = AlertUtil.showProgress(getContext());
 
             {

@@ -20,46 +20,10 @@
     <string name="CustomDeletedMark">Custom Deleted Mark</string>
     <string name="HidePremiumSection">Hide Premium in Settings</string>
     <string name="HideHelpSection">Hide Help in Settings</string>
-    <string name="ProviderLLMTranslator">AI Translator</string>
-    <string name="LlmApiUrl">API URL</string>
-    <string name="LlmApiUrlHint" translatable="false">https://api.openai.com/v1</string>
     <string name="LlmApiKey">API Key</string>
     <string name="LlmModelName">Model</string>
-    <string name="LlmApiUrlNotice">API base URL. Defaults to the Gemini OpenAI-compatible endpoint if left blank.</string>
-    <string name="LlmApiKeyNotice">Enter one or more API keys, separated by commas (e.g., key1,key2). Multiple keys will be used in rotation.</string>
-    <string name="LlmApiUrlDefault" translatable="false">https://generativelanguage.googleapis.com/v1beta/openai</string>
     <string name="LlmModelNameDefault" translatable="false">gemini-flash-latest</string>
-    <string name="LlmProviderOpenAIModel" translatable="false">gpt-5.6-luna</string>
-    <string name="LlmProviderGeminiModel" translatable="false">gemini-flash-lite-latest</string>
-    <string name="LlmProviderGroqModel" translatable="false">openai/gpt-oss-120b</string>
-    <string name="LlmProviderDeepSeekModel" translatable="false">deepseek-v4-flash</string>
-    <string name="LlmProviderXAIModel" translatable="false"></string>
-    <string name="LlmProviderCerebrasModel" translatable="false">gemma-4-31b</string>
-    <string name="LlmProviderOllamaCloudModel" translatable="false">gemma4:31b</string>
-    <string name="LlmProviderOpenRouterModel" translatable="false">openrouter/free</string>
-    <string name="LlmProviderVercelAIGatewayModel" translatable="false">google/gemma-4-31b-it</string>
-    <string name="LlmProviderPreset">Model Provider</string>
-    <string name="LlmProviderCustom">Custom</string>
-    <string name="LlmProviderOpenAIKey">OpenAI API Key</string>
     <string name="LlmProviderGeminiKey">Gemini API Key</string>
-    <string name="LlmSystemPrompt">System Prompt</string>
-    <string name="LlmSystemPromptHint">You are a professional translator.</string>
-    <string name="LlmSystemPromptNotice">Define the AI\'s role and behavior.\n\nThis prompt sets the tone, personality, and limitations for the AI. Consider describing what type of assistant the AI should be.</string>
-    <string name="LlmUserPrompt">User Prompt</string>
-    <string name="LlmUserPromptHint">Translate @text to @toLang.</string>
-    <string name="LlmUserPromptNotice">Use @text as a placeholder for the original message, and @toLang for the target language (optional).\n\nLeaving this blank will use the default prompt.</string>
-    <string name="LlmUseContext">Use Context</string>
-    <string name="LlmUseContextNotice">Improves translation quality at the cost of more tokens.</string>
-    <string name="LlmContextSize">Context messages</string>
-    <string name="LlmUseContextInAutoTranslate">Use Context in Auto Translate</string>
-    <string name="LlmUseContextInAutoTranslateNotice">May increase token usage and latency.</string>
-    <string name="LlmTemperature">Temperature</string>
-    <string name="LlmModelsLoadFailed">Failed to load model list.</string>
-    <string name="LlmTest">Test</string>
-    <string name="LlmTestResultHttpStatusCode">HTTP Code</string>
-    <string name="LlmTestResultDuration">Duration</string>
-    <string name="LlmTestResultResponse">Response</string>
-    <string name="AITranslatorSettings">AI Translator</string>
     <string name="TranslucentDeletedMessages">Translucent Deleted Messages</string>
     <string name="ArticleTranslationProvider">Article Translation Provider</string>
     <string name="EnableSeparateArticleTranslator">Use a Different Provider for Article</string>
@@ -196,7 +160,6 @@
     <string name="GeminiNotSupport">Gemini is not supported on this device.</string>
     <string name="ReplyInPrivate">Reply in Private Chat</string>
     <string name="TranscribeProviderGeminiPrompt">Prompt (optional)</string>
-    <string name="uploadBoost">Upload Speed Boost</string>
     <string name="HideDividers">Hide Dividers</string>
     <string name="IconReplacements">Icon Replacements</string>
     <string name="IconReplacementSolar">Solar Icons by @Design480</string>
@@ -218,7 +181,6 @@
     <string name="DebugMenuMakeMemoryDump">Make Memory Dump</string>
     <string name="DebugMenuShowFrameMetrics">Show Frame Metrics</string>
     <string name="DebugMenuHideFrameMetrics">Hide Frame Metrics</string>
-    <string name="TranslateMessageLLM">Translate with AI</string>
     <string name="EditLocalNameOverride">Editing local name override.</string>
     <string name="ResetChatNameOverrides">Reset Chat Name Overrides</string>
     <string name="ResetChatNameNotification">Chat name overrides cleared.</string>

@@ -188,7 +188,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import kotlin.Unit;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.helpers.ChatsHelper;
-import tw.nekomimi.nekogram.llm.LlmConfig;
 import tw.nekomimi.nekogram.translate.Translator;
 import tw.nekomimi.nekogram.translate.TranslatorKt;
 import tw.nekomimi.nekogram.utils.AlertUtil;
@@ -4082,38 +4081,10 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             if (chatActivity != null && commentTextView != null && commentTextView.getText().length() > 0) {
                 String languageText = Translator.getInputTranslateLangForChat(ChatsHelper.getChatId()).toUpperCase();
                 StringBuilder sb;
-                if (LlmConfig.isLLMTranslatorAvailable() && !LlmConfig.llmIsDefaultProvider()) {
-                    sb = new StringBuilder();
-                    sb.append(getString(R.string.TranslateMessageLLM));
-                    sb.append(' ').append("(").append(languageText).append(")");
-                    options.add(R.drawable.magic_stick, sb,
-                        () -> {
-                            if (messageSendPreview != null) {
-                                messageSendPreview.dismiss(false);
-                                messageSendPreview = null;
-                            }
-                            Translator.showTargetLangSelect(view, true, (locale) -> {
-                                if (messageSendPreview != null && messageSendPreview.isShowing()) {
-                                    messageSendPreview.dismiss();
-                                }
-                                translateComment(parentFragment.getParentActivity(), locale, Translator.providerLLMTranslator);
-                                Translator.setInputTranslateLangForChat(ChatsHelper.getChatId(), TranslatorKt.getLocale2code(locale));
-                                return Unit.INSTANCE;
-                            });
-                        },
-                        () -> {
-                            translateComment(parentFragment.getParentActivity(), Translator.getInputTranslateLangLocaleForChat(ChatsHelper.getChatId()), Translator.providerLLMTranslator);
-                            if (messageSendPreview != null) {
-                                messageSendPreview.dismiss(false);
-                                messageSendPreview = null;
-                            }
-                        }
-                    );
-                }
                 sb = new StringBuilder();
                 sb.append(getString(R.string.TranslateMessage));
                 sb.append(' ').append("(").append(languageText).append(")");
-                options.add(LlmConfig.llmIsDefaultProvider() ? R.drawable.magic_stick : R.drawable.ic_translate, sb,
+                options.add(R.drawable.ic_translate, sb,
                         () -> {
                             if (messageSendPreview != null) {
                                 messageSendPreview.dismiss(false);

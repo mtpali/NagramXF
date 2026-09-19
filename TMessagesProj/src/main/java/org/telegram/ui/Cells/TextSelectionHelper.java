@@ -76,7 +76,6 @@ import org.telegram.ui.RestrictedLanguagesSelectActivity;
 import java.util.ArrayList;
 
 import tw.nekomimi.nekogram.NekoConfig;
-import tw.nekomimi.nekogram.llm.LlmConfig;
 import tw.nekomimi.nekogram.translate.Translator;
 import tw.nekomimi.nekogram.translate.TranslatorKt;
 import tw.nekomimi.nekogram.utils.AlertUtil;
@@ -1564,7 +1563,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 menu.add(Menu.NONE, android.R.id.copy, 0, android.R.string.copy);
                 menu.add(Menu.NONE, R.id.menu_quote, 1, LocaleController.getString(R.string.Quote));
-                menu.add(Menu.NONE, TRANSLATE, 2, LlmConfig.isLLMTranslatorAvailable() ? getString(R.string.TranslateMessageLLM) : getString(R.string.TranslateMessage));
+                menu.add(Menu.NONE, TRANSLATE, 2, getString(R.string.TranslateMessage));
                 menu.add(Menu.NONE, android.R.id.cut, 3, android.R.string.cut);
                 menu.add(Menu.NONE, android.R.id.paste, 4, android.R.string.paste);
                 menu.add(Menu.NONE, android.R.id.selectAll, 5, android.R.string.selectAll);
@@ -1674,7 +1673,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                     Activity activity = ProxyUtil.getOwnerActivity((((View) selectedView).getContext()));
                     AlertDialog pro = AlertUtil.showProgress(activity);
                     pro.show();
-                    Translator.translate(TranslatorKt.getCode2Locale(NekoConfig.translateToLang.String()), urlFinal, LlmConfig.isLLMTranslatorAvailable() ? Translator.providerLLMTranslator : 0, new Translator.Companion.TranslateCallBack() {
+                    Translator.translate(TranslatorKt.getCode2Locale(NekoConfig.translateToLang.String()), urlFinal, 0, new Translator.Companion.TranslateCallBack() {
                         @Override
                         public void onSuccess(@NotNull String translation) {
                             pro.dismiss();

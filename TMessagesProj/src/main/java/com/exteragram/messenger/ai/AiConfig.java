@@ -33,14 +33,12 @@ public abstract class AiConfig {
     public static SharedPreferences.Editor editor;
 
     public static final ConfigItem saveHistoryConfig = new ConfigItem("aiChat_saveHistory", ConfigItem.configTypeBool, true);
-    public static final ConfigItem useLlmProviderConfig = new ConfigItem("aiChat_useLlmProvider", ConfigItem.configTypeBool, false);
     public static final ConfigItem responseStreamingConfig = new ConfigItem("aiChat_responseStreaming", ConfigItem.configTypeBool, true);
     public static final ConfigItem showResponseOnlyConfig = new ConfigItem("aiChat_showResponseOnly", ConfigItem.configTypeBool, false);
     public static final ConfigItem insertAsQuoteConfig = new ConfigItem("aiChat_insertAsQuote", ConfigItem.configTypeBool, true);
     public static final ConfigItem temperatureConfig = new ConfigItem("aiChat_temperature", ConfigItem.configTypeInt, 10);
 
     public static boolean saveHistory;
-    public static boolean useLlmProvider;
     public static boolean responseStreaming;
     public static boolean showResponseOnly;
     public static boolean insertAsQuote;
@@ -61,14 +59,12 @@ public abstract class AiConfig {
 
             SharedPreferences nekoPrefs = NekoConfig.getPreferences();
             saveHistoryConfig.value = nekoPrefs.getBoolean(saveHistoryConfig.key, (boolean) saveHistoryConfig.defaultValue);
-            useLlmProviderConfig.value = nekoPrefs.getBoolean(useLlmProviderConfig.key, (boolean) useLlmProviderConfig.defaultValue);
             responseStreamingConfig.value = nekoPrefs.getBoolean(responseStreamingConfig.key, (boolean) responseStreamingConfig.defaultValue);
             showResponseOnlyConfig.value = nekoPrefs.getBoolean(showResponseOnlyConfig.key, (boolean) showResponseOnlyConfig.defaultValue);
             insertAsQuoteConfig.value = nekoPrefs.getBoolean(insertAsQuoteConfig.key, (boolean) insertAsQuoteConfig.defaultValue);
             temperatureConfig.value = nekoPrefs.getInt(temperatureConfig.key, (int) temperatureConfig.defaultValue);
 
             saveHistory = saveHistoryConfig.Bool();
-            useLlmProvider = useLlmProviderConfig.Bool();
             responseStreaming = responseStreamingConfig.Bool();
             showResponseOnly = showResponseOnlyConfig.Bool();
             insertAsQuote = insertAsQuoteConfig.Bool();
@@ -80,7 +76,6 @@ public abstract class AiConfig {
 
     public static void syncFields() {
         saveHistory = saveHistoryConfig.Bool();
-        useLlmProvider = useLlmProviderConfig.Bool();
         responseStreaming = responseStreamingConfig.Bool();
         showResponseOnly = showResponseOnlyConfig.Bool();
         insertAsQuote = insertAsQuoteConfig.Bool();

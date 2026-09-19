@@ -849,7 +849,7 @@ public class MessageHelper extends BaseController {
         boolean canSave = (type == 4 || type == 5 || type == 6 || type == 10);
         boolean downloading = messageObject.loadedFileSize > 0;
         if (type == 4 && messageObject.getDocument() == null) {
-            return false;
+            return messageObject.isPhoto() && messageObject.mediaExists;
         }
         return canSave || downloading;
     }

@@ -197,6 +197,7 @@ public class EmojiView extends FrameLayout implements
     private final static int TAB_EMOJI = 0;
     private final static int TAB_GIFS = 1;
     private final static int TAB_STICKERS = 2;
+    private final static int TAB_TEXT = 3;
 
     public int emojiCacheType = AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD;
 
@@ -260,6 +261,7 @@ public class EmojiView extends FrameLayout implements
     public boolean shouldLightenBackground = true;
 
     private FrameLayout stickersContainer;
+    private SavedTextPanel savedTextPanel;
     private StickersGridAdapter stickersGridAdapter;
     private StickersSearchGridAdapter stickersSearchGridAdapter;
     private RecyclerListView.OnItemClickListener stickersOnItemClickListener;
@@ -300,6 +302,8 @@ public class EmojiView extends FrameLayout implements
                 currentTabs.add(allTabs.get(i));
             }  if (allTabs.get(i).type == TAB_STICKERS && allowStickers) {
                 currentTabs.add(allTabs.get(i));
+            } if (allTabs.get(i).type == TAB_TEXT) {
+                currentTabs.add(allTabs.get(i));
             }
         }
         if (typeTabs != null) {
@@ -312,6 +316,17 @@ public class EmojiView extends FrameLayout implements
                 typeTabs.setViewPager(pager);
             }
         }
+    }
+
+    private int getTabTypeAt(int position) {
+        return position >= 0 && position < currentTabs.size() ? currentTabs.get(position).type : -1;
+    }
+
+    private int indexOfTabType(int type) {
+        for (int i = 0; i < currentTabs.size(); i++) {
+            if (currentTabs.get(i).type == type) return i;
+        }
+        return -1;
     }
 
     private boolean allowEmojisForNonPremium;
@@ -445,6 +460,10 @@ public class EmojiView extends FrameLayout implements
         }
 
         default void onEmojiSelected(String emoji) {
+
+        }
+
+        default void onSavedTextSelected(String text) {
 
         }
 
@@ -2619,6 +2638,14 @@ public class EmojiView extends FrameLayout implements
             stickersContainer.addView(stickerAddPackButtonContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
         }
 
+        savedTextPanel = new SavedTextPanel(context, resourcesProvider, text -> {
+            if (delegate != null) delegate.onSavedTextSelected(text);
+        });
+        Tab textTab = new Tab();
+        textTab.type = TAB_TEXT;
+        textTab.view = savedTextPanel;
+        allTabs.add(textTab);
+
         currentTabs.clear();
         currentTabs.addAll(allTabs);
 
@@ -2640,9 +2667,10 @@ public class EmojiView extends FrameLayout implements
 
             @Override
             public void setCurrentItem(int item, boolean smoothScroll) {
-                startStopVisibleGifs(item == 1);
+                int tabType = getTabTypeAt(item);
+                startStopVisibleGifs(tabType == TAB_GIFS);
                 if (item == getCurrentItem()) {
-                    if (item == 0) {
+                    if (tabType == TAB_EMOJI) {
                         tabsMinusDy[Type.EMOJIS] = 0;
                         ObjectAnimator animator = ObjectAnimator.ofFloat(emojiTabs, TRANSLATION_Y, 0);
                         animator.setDuration(150);
@@ -2652,10 +2680,12 @@ public class EmojiView extends FrameLayout implements
                         if (emojiTabs != null) {
                             emojiTabs.select(0);
                         }
-                    } else if (item == 1) {
+                    } else if (tabType == TAB_GIFS && gifGridView != null) {
                         gifGridView.smoothScrollToPosition(0);
-                    } else {
+                    } else if (tabType == TAB_STICKERS && stickersGridView != null) {
                         stickersGridView.smoothScrollToPosition(1);
+                    } else if (tabType == TAB_TEXT && savedTextPanel != null) {
+                        savedTextPanel.refresh();
                     }
                     return;
                 }
@@ -2748,50 +2778,50 @@ public class EmojiView extends FrameLayout implements
                     checkGridVisibility(position, positionOffset);
                     EmojiView.this.onPageScrolled(position, getMeasuredWidth() - getPaddingLeft() - getPaddingRight(), positionOffsetPixels);
                     showBottomTab(true, true);
-                    SearchField currentField;
+                    SearchField currentField = null;
                     int p = pager.getCurrentItem();
-                    if (p == 0) {
+                    int tabType = getTabTypeAt(p);
+                    if (tabType == TAB_EMOJI) {
                         currentField = emojiSearchField;
-                    } else if (p == 1) {
+                    } else if (tabType == TAB_GIFS) {
                         currentField = gifSearchField;
-                    } else {
+                    } else if (tabType == TAB_STICKERS) {
                         currentField = stickersSearchField;
                     }
-                    String currentFieldText = currentField.searchEditText.getText().toString();
-                    for (int a = 0; a < 3; a++) {
-                        SearchField field;
-                        if (a == 0) {
-                            field = emojiSearchField;
-                        } else if (a == 1) {
-                            field = gifSearchField;
-                        } else {
-                            field = stickersSearchField;
+                    if (currentField != null && currentField.searchEditText != null) {
+                        String currentFieldText = currentField.searchEditText.getText().toString();
+                        for (int a = 0; a < 3; a++) {
+                            SearchField field = a == 0 ? emojiSearchField : a == 1 ? gifSearchField : stickersSearchField;
+                            if (field == null || field == currentField || field.searchEditText == null || field.searchEditText.getText().toString().equals(currentFieldText)) {
+                                continue;
+                            }
+                            field.searchEditText.setText(currentFieldText);
+                            field.searchEditText.setSelection(currentFieldText.length());
                         }
-                        if (field == null || field == currentField || field.searchEditText == null || field.searchEditText.getText().toString().equals(currentFieldText)) {
-                            continue;
-                        }
-                        field.searchEditText.setText(currentFieldText);
-                        field.searchEditText.setSelection(currentFieldText.length());
                     }
-                    startStopVisibleGifs((position == 0 && positionOffset > 0) || position == 1);
+                    boolean gifVisible = getTabTypeAt(position) == TAB_GIFS
+                            || positionOffset > 0 && getTabTypeAt(position + 1) == TAB_GIFS;
+                    startStopVisibleGifs(gifVisible);
                     updateStickerTabsPosition();
                 }
 
                 @Override
                 public void onPageSelected(int position) {
                     saveNewPage();
-                    showBackspaceButton(position == 0, true);
-                    showStickerSettingsButton(position == 2 && (shouldDrawBackground || shouldDrawStickerSettings), true);
+                    int tabType = getTabTypeAt(position);
+                    showBackspaceButton(tabType == TAB_EMOJI, true);
+                    showStickerSettingsButton(tabType == TAB_STICKERS && (shouldDrawBackground || shouldDrawStickerSettings), true);
+                    if (tabType == TAB_TEXT && savedTextPanel != null) savedTextPanel.refresh();
                     if (delegate.isSearchOpened()) {
-                        if (position == 0) {
+                        if (tabType == TAB_EMOJI) {
                             if (emojiSearchField != null) {
                                 emojiSearchField.searchEditText.requestFocus();
                             }
-                        } else if (position == 1) {
+                        } else if (tabType == TAB_GIFS) {
                             if (gifSearchField != null) {
                                 gifSearchField.searchEditText.requestFocus();
                             }
-                        } else {
+                        } else if (tabType == TAB_STICKERS) {
                             if (stickersSearchField != null) {
                                 stickersSearchField.searchEditText.requestFocus();
                             }
@@ -2816,12 +2846,15 @@ public class EmojiView extends FrameLayout implements
             searchButton.setOnClickListener(v -> {
                 SearchField currentField;
                 int currentItem = pager.getCurrentItem();
-                if (currentItem == 0) {
+                int tabType = getTabTypeAt(currentItem);
+                if (tabType == TAB_EMOJI) {
                     currentField = emojiSearchField;
-                } else if (currentItem == 1) {
+                } else if (tabType == TAB_GIFS) {
                     currentField = gifSearchField;
-                } else {
+                } else if (tabType == TAB_STICKERS) {
                     currentField = stickersSearchField;
+                } else {
+                    currentField = null;
                 }
                 if (currentField == null) {
                     return;
@@ -3763,34 +3796,16 @@ public class EmojiView extends FrameLayout implements
     }
 
     private void checkGridVisibility(int position, float positionOffset) {
-        if (stickersContainer == null || gifContainer == null) {
-            return;
-        }
-        if (position == 0) {
-            emojiGridView.setVisibility(View.VISIBLE);
-            gifGridView.setVisibility(positionOffset == 0 ? View.GONE : View.VISIBLE);
-            gifTabs.setVisibility(positionOffset == 0 ? View.GONE : View.VISIBLE);
-            stickersGridView.setVisibility(View.GONE);
-            if (stickersTabContainer != null) {
-                stickersTabContainer.setVisibility(View.GONE);
-            }
-        } else if (position == 1) {
-            emojiGridView.setVisibility(View.GONE);
-            gifGridView.setVisibility(View.VISIBLE);
-            gifTabs.setVisibility(View.VISIBLE);
-            stickersGridView.setVisibility(positionOffset == 0 ? View.GONE : View.VISIBLE);
-            if (stickersTabContainer != null) {
-                stickersTabContainer.setVisibility(positionOffset == 0 ? View.GONE : View.VISIBLE);
-            }
-        } else if (position == 2) {
-            emojiGridView.setVisibility(View.GONE);
-            gifGridView.setVisibility(View.GONE);
-            gifTabs.setVisibility(View.GONE);
-            stickersGridView.setVisibility(View.VISIBLE);
-            if (stickersTabContainer != null) {
-                stickersTabContainer.setVisibility(View.VISIBLE);
-            }
-        }
+        int currentType = getTabTypeAt(position);
+        int nextType = positionOffset > 0 ? getTabTypeAt(position + 1) : -1;
+        boolean showEmoji = currentType == TAB_EMOJI || nextType == TAB_EMOJI;
+        boolean showGifs = currentType == TAB_GIFS || nextType == TAB_GIFS;
+        boolean showStickers = currentType == TAB_STICKERS || nextType == TAB_STICKERS;
+        if (emojiGridView != null) emojiGridView.setVisibility(showEmoji ? View.VISIBLE : View.GONE);
+        if (gifGridView != null) gifGridView.setVisibility(showGifs ? View.VISIBLE : View.GONE);
+        if (gifTabs != null) gifTabs.setVisibility(showGifs ? View.VISIBLE : View.GONE);
+        if (stickersGridView != null) stickersGridView.setVisibility(showStickers ? View.VISIBLE : View.GONE);
+        if (stickersTabContainer != null) stickersTabContainer.setVisibility(showStickers ? View.VISIBLE : View.GONE);
     }
 
     private void openPremiumAnimatedEmojiFeature() {
@@ -4658,7 +4673,7 @@ public class EmojiView extends FrameLayout implements
             return;
         }
         Emoji.addRecentEmoji(code);
-        if (getVisibility() != VISIBLE || pager.getCurrentItem() != 0) {
+        if (getVisibility() != VISIBLE || getTabTypeAt(pager.getCurrentItem()) != TAB_EMOJI) {
             Emoji.sortEmoji();
             emojiAdapter.notifyDataSetChanged();
         }
@@ -5079,7 +5094,7 @@ public class EmojiView extends FrameLayout implements
         }
         lastBottomScrollDy += dy;
         int offset;
-        if (pager.getCurrentItem() == 0) {
+        if (getTabTypeAt(pager.getCurrentItem()) == TAB_EMOJI) {
             offset = AndroidUtilities.dp(38);
         } else {
             offset = AndroidUtilities.dp(48);
@@ -5488,11 +5503,13 @@ public class EmojiView extends FrameLayout implements
             return;
         }
         int newPage;
-        int currentItem = pager.getCurrentItem();
-        if (currentItem == 2) {
+        int tabType = getTabTypeAt(pager.getCurrentItem());
+        if (tabType == TAB_STICKERS) {
             newPage = 1;
-        } else if (currentItem == 1) {
+        } else if (tabType == TAB_GIFS) {
             newPage = 2;
+        } else if (tabType == TAB_TEXT) {
+            newPage = 3;
         } else {
             newPage = 0;
         }
@@ -5511,9 +5528,10 @@ public class EmojiView extends FrameLayout implements
         if (delegate == null) {
             return;
         }
-        if (position == 1) {
-            delegate.onTabOpened(positionOffsetPixels != 0 ? 2 : 0);
-        } else if (position == 2) {
+        int tabType = getTabTypeAt(positionOffsetPixels == 0 ? position : position + 1);
+        if (tabType == TAB_GIFS) {
+            delegate.onTabOpened(2);
+        } else if (tabType == TAB_STICKERS) {
             delegate.onTabOpened(3);
         } else {
             delegate.onTabOpened(0);
@@ -5538,7 +5556,8 @@ public class EmojiView extends FrameLayout implements
     public void switchToGifRecent() {
         showBackspaceButton(false, false);
         showStickerSettingsButton(false, false);
-        pager.setCurrentItem(1, false);
+        int gifIndex = indexOfTabType(TAB_GIFS);
+        if (gifIndex >= 0) pager.setCurrentItem(gifIndex, false);
     }
 
     private void updateEmojiHeaders() {
@@ -6065,17 +6084,21 @@ public class EmojiView extends FrameLayout implements
     }
 
     public void onOpen(boolean forceEmoji, boolean groupEmojiHintWasVisible) {
-        if (currentPage != 0 && stickersBanned) {
-            currentPage = 0;
+        if (currentTabs.size() == 1 && getTabTypeAt(0) == TAB_TEXT) {
+            currentPage = 3;
+        }
+        if ((currentPage == 1 || currentPage == 2) && stickersBanned) {
+            currentPage = emojiBanned ? 3 : 0;
         }
         if (currentPage == 0 && emojiBanned) {
-            currentPage = 1;
+            currentPage = stickersBanned ? 3 : 1;
         }
-        if (currentPage == 0 || forceEmoji || currentTabs.size() == 1) {
+        if (currentPage == 0 || forceEmoji && indexOfTabType(TAB_EMOJI) >= 0) {
             showBackspaceButton(true, false);
             showStickerSettingsButton(false, false);
-            if (pager.getCurrentItem() != 0) {
-                pager.setCurrentItem(0, !forceEmoji);
+            int emojiIndex = indexOfTabType(TAB_EMOJI);
+            if (emojiIndex >= 0 && pager.getCurrentItem() != emojiIndex) {
+                pager.setCurrentItem(emojiIndex, !forceEmoji);
             }
             if (groupEmojiHintWasVisible) {
                 AndroidUtilities.runOnUIThread(() -> {
@@ -6095,8 +6118,9 @@ public class EmojiView extends FrameLayout implements
         } else if (currentPage == 1) {
             showBackspaceButton(false, false);
             showStickerSettingsButton(shouldDrawBackground || shouldDrawStickerSettings, false);
-            if (pager.getCurrentItem() != 2) {
-                pager.setCurrentItem(2, false);
+            int stickersIndex = indexOfTabType(TAB_STICKERS);
+            if (stickersIndex >= 0 && pager.getCurrentItem() != stickersIndex) {
+                pager.setCurrentItem(stickersIndex, false);
             }
             if (stickersTab != null) {
                 firstTabUpdate = true;
@@ -6113,8 +6137,9 @@ public class EmojiView extends FrameLayout implements
         } else if (currentPage == 2) {
             showBackspaceButton(false, false);
             showStickerSettingsButton(false, false);
-            if (pager.getCurrentItem() != 1) {
-                pager.setCurrentItem(1, false);
+            int gifIndex = indexOfTabType(TAB_GIFS);
+            if (gifIndex >= 0 && pager.getCurrentItem() != gifIndex) {
+                pager.setCurrentItem(gifIndex, false);
             }
             if (gifTabs != null) {
                 gifTabs.selectTab(0);
@@ -6122,6 +6147,14 @@ public class EmojiView extends FrameLayout implements
             if (gifSearchField != null && gifSearchField.categoriesListView != null) {
                 gifSearchField.categoriesListView.selectCategory(gifSearchField.recent);
             }
+        } else if (currentPage == 3) {
+            showBackspaceButton(false, false);
+            showStickerSettingsButton(false, false);
+            int textIndex = indexOfTabType(TAB_TEXT);
+            if (textIndex >= 0 && pager.getCurrentItem() != textIndex) {
+                pager.setCurrentItem(textIndex, false);
+            }
+            if (savedTextPanel != null) savedTextPanel.refresh();
         }
         showBottomTab(true, true);
     }
@@ -6271,22 +6304,23 @@ public class EmojiView extends FrameLayout implements
         } else {
             currentChatId = 0;
         }
-        View view = typeTabs.getTab(stickersBanned ? 2 : 0);
-        if (view != null) {
-            view.setAlpha(currentChatId != 0 ? 0.15f : 1.0f);
-            if (stickersBanned) {
-                if (currentChatId != 0 && pager.getCurrentItem() != 0) {
-                    showBackspaceButton(true, true);
-                    showStickerSettingsButton(false, true);
-                    pager.setCurrentItem(0, false);
-                }
-            } else {
-                if (currentChatId != 0 && pager.getCurrentItem() != 1) {
-                    showBackspaceButton(false, true);
-                    showStickerSettingsButton(false, true);
-                    pager.setCurrentItem(1, false);
-                }
-            }
+        int emojiIndex = indexOfTabType(TAB_EMOJI);
+        int gifIndex = indexOfTabType(TAB_GIFS);
+        int stickersIndex = indexOfTabType(TAB_STICKERS);
+        if (emojiIndex >= 0 && typeTabs.getTab(emojiIndex) != null) {
+            typeTabs.getTab(emojiIndex).setAlpha(emojiBanned ? 0.15f : 1.0f);
+        }
+        if (gifIndex >= 0 && typeTabs.getTab(gifIndex) != null) {
+            typeTabs.getTab(gifIndex).setAlpha(stickersBanned ? 0.15f : 1.0f);
+        }
+        if (stickersIndex >= 0 && typeTabs.getTab(stickersIndex) != null) {
+            typeTabs.getTab(stickersIndex).setAlpha(stickersBanned ? 0.15f : 1.0f);
+        }
+        int currentType = getTabTypeAt(pager.getCurrentItem());
+        if (currentChatId != 0 && (emojiBanned && currentType == TAB_EMOJI
+                || stickersBanned && (currentType == TAB_GIFS || currentType == TAB_STICKERS))) {
+            int fallback = !emojiBanned ? emojiIndex : indexOfTabType(TAB_TEXT);
+            if (fallback >= 0) pager.setCurrentItem(fallback, false);
         }
     }
 
@@ -8587,11 +8621,12 @@ public class EmojiView extends FrameLayout implements
 
         @Override
         public boolean canScrollToTab(int position) {
-            if ((position == 1 || position == 2) && stickersBanned) {
-                showStickerBanHint(true, false, position == 1);
+            int type = getTabTypeAt(position);
+            if ((type == TAB_GIFS || type == TAB_STICKERS) && stickersBanned) {
+                showStickerBanHint(true, false, type == TAB_GIFS);
                 return false;
             }
-            if (position == 0 && emojiBanned) {
+            if (type == TAB_EMOJI && emojiBanned) {
                 showStickerBanHint(true, true, false);
                 return false;
             }
@@ -8608,20 +8643,22 @@ public class EmojiView extends FrameLayout implements
         }
 
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
+            switch (getTabTypeAt(position)) {
+                case TAB_EMOJI:
                     return getString(R.string.Emoji);
-                case 1:
+                case TAB_GIFS:
                     return getString(R.string.AccDescrGIFs);
-                case 2:
+                case TAB_STICKERS:
                     return getString(R.string.AccDescrStickers);
+                case TAB_TEXT:
+                    return getString(R.string.SavedTextTab);
             }
             return null;
         }
 
         @Override
         public int getTabPadding(int position) {
-            return AndroidUtilities.dp(position == 1 ? 12 : 18);
+            return AndroidUtilities.dp(getTabTypeAt(position) == TAB_GIFS ? 12 : 18);
         }
 
         @Override
@@ -10223,6 +10260,8 @@ public class EmojiView extends FrameLayout implements
                 if (stickersGridAdapter != null) {
                     stickersGridAdapter.notifyDataSetChanged();
                 }
+            } else if (currentPage == 3 && savedTextPanel != null) {
+                savedTextPanel.refresh();
             }
         }
     }

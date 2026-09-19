@@ -11,7 +11,6 @@ import tw.nekomimi.nekogram.NekoConfig
 import tw.nekomimi.nekogram.config.ConfigItem
 import tw.nekomimi.nekogram.config.ConfigItemKeyLinked
 import tw.nekomimi.nekogram.config.ConfigItemKeyLinkedGroup
-import tw.nekomimi.nekogram.llm.utils.LlmUrlNormalizer
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
 
@@ -956,174 +955,6 @@ object NaConfig {
             ConfigItem.configTypeBool,
             true
         )
-    val llmApiUrl =
-        addConfig(
-            "LlmApiUrl",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmApiKey =
-        addConfig(
-            "LlmApiKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmModelName =
-        addConfig(
-            "LlmModelName",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmSystemPrompt =
-        addConfig(
-            "LlmSystemPrompt",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmUserPrompt =
-        addConfig(
-            "LlmUserPrompt",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderPreset =
-        addConfig(
-            "LlmProviderPreset",
-            ConfigItem.configTypeInt,
-            0
-        )
-    val llmProviderOpenAIKey =
-        addConfig(
-            "LlmProviderOpenAIKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderOpenAIModel =
-        addConfig(
-            "LlmProviderOpenAIModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderGeminiKey =
-        addConfig(
-            "LlmProviderGeminiKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderGeminiModel =
-        addConfig(
-            "LlmProviderGeminiModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderXAIKey =
-        addConfig(
-            "LlmProviderXAIKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderXAIModel =
-        addConfig(
-            "LlmProviderXAIModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderGroqKey =
-        addConfig(
-            "LlmProviderGroqKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderGroqModel =
-        addConfig(
-            "LlmProviderGroqModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderDeepSeekKey =
-        addConfig(
-            "LlmProviderDeepSeekKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderDeepSeekModel =
-        addConfig(
-            "LlmProviderDeepSeekModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderCerebrasKey =
-        addConfig(
-            "LlmProviderCerebrasKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderCerebrasModel =
-        addConfig(
-            "LlmProviderCerebrasModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderOllamaCloudKey =
-        addConfig(
-            "LlmProviderOllamaCloudKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderOllamaCloudModel =
-        addConfig(
-            "LlmProviderOllamaCloudModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderOpenRouterKey =
-        addConfig(
-            "LlmProviderOpenRouterKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderOpenRouterModel =
-        addConfig(
-            "LlmProviderOpenRouterModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderVercelAIGatewayKey =
-        addConfig(
-            "LlmProviderVercelAIGatewayKey",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmProviderVercelAIGatewayModel =
-        addConfig(
-            "LlmProviderVercelAIGatewayModel",
-            ConfigItem.configTypeString,
-            ""
-        )
-    val llmTemperature =
-        addConfig(
-            "LlmTemperature",
-            ConfigItem.configTypeFloat,
-            0.7f
-        )
-    val llmUseContext =
-        addConfig(
-            "LlmUseContext",
-            ConfigItem.configTypeBool,
-            false
-        )
-    val llmContextSize =
-        addConfig(
-            "LlmContextSize",
-            ConfigItem.configTypeInt,
-            2
-        )
-    val llmUseContextInAutoTranslate =
-        addConfig(
-            "LlmUseContextInAutoTranslate",
-            ConfigItem.configTypeBool,
-            false
-        )
     val translucentDeletedMessages =
         addConfig(
             "TranslucentDeletedMessages",
@@ -1581,12 +1412,6 @@ object NaConfig {
             ConfigItem.configTypeBool,
             true
         )
-    val showTranslateMessageLLM =
-        addConfig(
-            "TranslateMessageLLM",
-            ConfigItem.configTypeBool,
-            false
-        )
     val leftBottomButton =
         addConfig(
             "LeftBottomButtonAction",
@@ -1950,6 +1775,14 @@ object NaConfig {
         if (translatorMode.Int() !in 0..2) {
             translatorMode.setConfigInt(0)
         }
+        // AI Translator used action id 9. Keep existing users on the normal
+        // translate action after the provider is removed.
+        if (doubleTapAction.Int() == 9) {
+            doubleTapAction.setConfigInt(3)
+        }
+        if (doubleTapActionOut.Int() == 9) {
+            doubleTapActionOut.setConfigInt(3)
+        }
         if (!getPreferences().contains(idDcType.key) && !getPreferences().getBoolean(
                 "ShowIdAndDc", true
             )
@@ -1999,11 +1832,6 @@ object NaConfig {
             strokeOnViews.changed(SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW)
         }
 
-        val currentLlmApiUrl = llmApiUrl.String()
-        val normalizedLlmApiUrl = LlmUrlNormalizer.normalizeBaseUrl(currentLlmApiUrl)
-        if (normalizedLlmApiUrl != currentLlmApiUrl) {
-            llmApiUrl.setConfigString(normalizedLlmApiUrl)
-        }
 
         if (!getPreferences().getBoolean("SwitchStyleModernRemoved", false)) {
             when (switchStyle.Int()) {

@@ -1,7 +1,6 @@
 package tw.nekomimi.nekogram.llm.utils
 
 import org.json.JSONObject
-import tw.nekomimi.nekogram.llm.preset.LlmPresetRegistry
 
 object LlmModelUtil {
 
@@ -85,12 +84,12 @@ object LlmModelUtil {
             return
         }
         val providerPreset = when (url) {
-            LlmPresetRegistry.getPresetBaseUrl(LlmPresetRegistry.GEMINI) -> LlmPresetRegistry.GEMINI
-            LlmPresetRegistry.getPresetBaseUrl(LlmPresetRegistry.OPENROUTER) -> LlmPresetRegistry.OPENROUTER
-            LlmPresetRegistry.getPresetBaseUrl(LlmPresetRegistry.VERCEL_AI_GATEWAY) -> LlmPresetRegistry.VERCEL_AI_GATEWAY
+            "https://generativelanguage.googleapis.com/v1beta/openai" -> PROVIDER_GEMINI
+            "https://openrouter.ai/api/v1" -> PROVIDER_OPENROUTER
+            "https://ai-gateway.vercel.sh/v1" -> PROVIDER_VERCEL_AI_GATEWAY
             else -> null
         }
-        if (isGemma4(model) && providerPreset != LlmPresetRegistry.GEMINI) {
+        if (isGemma4(model) && providerPreset != PROVIDER_GEMINI) {
             return
         }
         applyReasoningParametersInternal(requestJson, providerPreset, model)
@@ -114,7 +113,7 @@ object LlmModelUtil {
     private fun applyReasoningParametersRouter(requestJson: JSONObject, providerPreset: Int, model: String?): Boolean {
         val routerProvider = getRouterModelProvider(model) ?: return false
         return when (providerPreset) {
-            LlmPresetRegistry.OPENROUTER -> {
+            PROVIDER_OPENROUTER -> {
                 when (routerProvider) {
                     "google" -> {
                         requestJson.put("reasoning", JSONObject().put("effort", getReasoningEffort(model)))
@@ -130,7 +129,7 @@ object LlmModelUtil {
                 requestJson.put("reasoning", JSONObject().put("effort", "none"))
                 true
             }
-            LlmPresetRegistry.VERCEL_AI_GATEWAY -> {
+            PROVIDER_VERCEL_AI_GATEWAY -> {
                 when (routerProvider) {
                     "google" -> {
                         val thinkingConfig = if (isGemini3(model)) {
@@ -227,4 +226,8 @@ object LlmModelUtil {
         }
         return sanitized
     }
+
+    private const val PROVIDER_GEMINI = 2
+    private const val PROVIDER_OPENROUTER = 8
+    private const val PROVIDER_VERCEL_AI_GATEWAY = 9
 }

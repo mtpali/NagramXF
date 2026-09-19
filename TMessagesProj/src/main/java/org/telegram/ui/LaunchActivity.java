@@ -1863,6 +1863,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 presentFragment(new ChatActivity(args));
             }
             drawerLayoutContainer.closeDrawer(false);
+        } else if (id == 13) {
+            presentFragment(new ProxyListActivity());
+            drawerLayoutContainer.closeDrawer(false);
         } else if (id == 15) {
             showCurrentUserStatusDialog();
         } else if (id == 16) {

@@ -57,7 +57,6 @@ import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.helpers.MessageHelper;
 import tw.nekomimi.nekogram.translate.Translator;
 import tw.nekomimi.nekogram.translate.TranslatorKt;
-import tw.nekomimi.nekogram.translate.source.LLMTranslator;
 import xyz.nextalone.nagram.NaConfig;
 
 public class TranslateController extends BaseController {
@@ -1105,8 +1104,7 @@ public class TranslateController extends BaseController {
                 loadingTranslations.add(message.getId());
             }
 
-            final String llmContext = buildLlmAutoTranslateContext(message);
-            Translator.translateWithContext(TranslatorKt.getCode2Locale(language), message.messageOwner.message, message.messageOwner.entities, llmContext, new Translator.Companion.TranslateCallBack2() {
+            Translator.translate(TranslatorKt.getCode2Locale(language), message.messageOwner.message, message.messageOwner.entities, new Translator.Companion.TranslateCallBack2() {
                 @Override
                 public void onSuccess(@NonNull TLRPC.TL_textWithEntities finalText) {
                     synchronized (TranslateController.this) {
@@ -2703,49 +2701,4 @@ public class TranslateController extends BaseController {
         }
     }
 
-    @Nullable
-    private String buildLlmAutoTranslateContext(@NonNull MessageObject message) {
-        if (!NaConfig.INSTANCE.getLlmUseContext().Bool()) {
-            return null;
-        }
-        if (!NaConfig.INSTANCE.getLlmUseContextInAutoTranslate().Bool()) {
-            return null;
-        }
-        if (NekoConfig.translationProvider.Int() != Translator.providerLLMTranslator) {
-            return null;
-        }
-
-        final int maxMessages = LLMTranslator.getContextMessageLimit();
-        if (maxMessages <= 0) {
-            return null;
-        }
-
-        final ArrayList<String> texts = new ArrayList<>(Math.min(maxMessages, 5));
-        MessageObject reply = message.replyMessageObject;
-        while (reply != null && texts.size() < maxMessages) {
-            final String text = reply.messageOwner != null ? reply.messageOwner.message : null;
-            if (!TextUtils.isEmpty(text) && !MessageHelper.shouldSkipTranslation(text)) {
-                texts.add(text.trim());
-            }
-            reply = reply.replyMessageObject;
-        }
-
-        if (texts.isEmpty()) {
-            return null;
-        }
-
-        Collections.reverse(texts);
-        final String dialogTitle = DialogObject.getName(currentAccount, message.getDialogId()).trim();
-        final StringBuilder sb = new StringBuilder();
-        if (!TextUtils.isEmpty(dialogTitle)) {
-            sb.append("Chat: ").append(dialogTitle).append("\n\nMessages:\n\n");
-        }
-        for (int i = 0; i < texts.size(); i++) {
-            if (i > 0) {
-                sb.append("\n\n");
-            }
-            sb.append(texts.get(i));
-        }
-        return sb.toString();
-    }
 }

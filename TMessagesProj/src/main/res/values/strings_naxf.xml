@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ProxyAddOnly">Add</string>
+    <string name="SavedTextTab">Text</string>
+    <string name="AddSavedText">Add saved text</string>
+    <string name="EditSavedText">Edit saved text</string>
+    <string name="SavedTextHint">Enter text</string>
+    <string name="NoSavedTexts">No saved texts yet. Tap Add to create one.</string>
     <string name="AppIconNagram">Telegram</string>
     <string name="AppIconTelegram">Telegram</string>
     <!-- Pillstack (ported from exteragram/ayuGram) -->
@@ -176,7 +182,6 @@
     <string name="AIChat">AI Chat</string>
     <string name="AIChatInfo">Setup Services, Roles, and History</string>
     <string name="AIChatServices">Services</string>
-    <string name="AIChatUseLlmProvider">Use AI Translator Provider</string>
     <string name="AIChatRoles">Roles</string>
     <string name="AIChatMessageHistory">Message History</string>
     <string name="AIChatHistoryInfo">When enabled, the AI will remember previous messages in the conversation.</string>

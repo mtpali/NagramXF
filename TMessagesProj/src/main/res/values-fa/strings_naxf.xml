@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ProxyAddOnly">افزودن</string>
+    <string name="SavedTextTab">متن</string>
+    <string name="AddSavedText">افزودن متن ذخیره‌شده</string>
+    <string name="EditSavedText">ویرایش متن ذخیره‌شده</string>
+    <string name="SavedTextHint">متن را وارد کنید</string>
+    <string name="NoSavedTexts">هنوز متنی ذخیره نشده است. برای ساختن، روی افزودن بزنید.</string>
     <string name="PillStackPills">پشته نشانک‌ها</string>
     <string name="PillStackPillsInfo">نمایش نشانک‌های تعاملی در کادر جستجو</string>
     <string name="PillStackActivePills">نشانک‌های فعال</string>

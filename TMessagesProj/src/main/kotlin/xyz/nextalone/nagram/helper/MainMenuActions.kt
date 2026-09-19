@@ -18,6 +18,7 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.GroupCreateActivity
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.ProfileActivity
+import org.telegram.ui.ProxyListActivity
 import org.telegram.ui.SessionsActivity
 import org.telegram.ui.SettingsActivity
 import org.telegram.ui.web.WebBrowserSettings
@@ -71,6 +72,8 @@ object MainMenuActions {
             id == DrawerMenuHelper.ID_SAVED -> openSavedMessages(fragment, currentAccount)
             id == DrawerMenuHelper.ID_SETTINGS ->
                 fragment.presentFragment(SettingsActivity())
+            id == DrawerMenuHelper.ID_PROXY ->
+                fragment.presentFragment(ProxyListActivity())
             id == DrawerMenuHelper.ID_MY_PROFILE -> {
                 val args = Bundle()
                 args.putLong("user_id", UserConfig.getInstance(currentAccount).clientUserId)

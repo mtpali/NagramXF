@@ -28,6 +28,7 @@ import java.util.List;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.ui.cells.HeaderCell;
 import xyz.nextalone.nagram.helper.DrawerMenuHelper;
+import xyz.nextalone.nagram.NaConfig;
 
 /**
  * ayuGram-style sidebar ("main menu") manager.
@@ -47,6 +48,7 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
 
     private int settingsHeaderRow;
     private int navigationDrawerRow;
+    private int alwaysShowDownloadIconRow;
     private int settingsShadowRow;
 
     private int visibleHeaderRow;
@@ -161,6 +163,7 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
 
         settingsHeaderRow = addRow();
         navigationDrawerRow = addRow(KEY_NAV_DRAWER);
+        alwaysShowDownloadIconRow = addRow(NaConfig.INSTANCE.getAlwaysShowDownloadIcon().getKey());
         settingsShadowRow = addRow();
 
         visibleHeaderRow = addRow();
@@ -206,6 +209,14 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
             NekoConfig.navigationDrawerEnabled.toggleConfigBool();
             ((TextCheckCell) view).setChecked(NekoConfig.navigationDrawerEnabled.Bool());
             NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.mainUserInfoChanged);
+            if (tooltip != null) {
+                tooltip.showWithAction(0, UndoView.ACTION_NEED_RESTART, null, null);
+            }
+            return;
+        }
+        if (position == alwaysShowDownloadIconRow) {
+            NaConfig.INSTANCE.getAlwaysShowDownloadIcon().toggleConfigBool();
+            ((TextCheckCell) view).setChecked(NaConfig.INSTANCE.getAlwaysShowDownloadIcon().Bool());
             if (tooltip != null) {
                 tooltip.showWithAction(0, UndoView.ACTION_NEED_RESTART, null, null);
             }
@@ -282,6 +293,7 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
         for (int i = 0; i < rowCount; i++) {
             if (i == settingsHeaderRow) items.add("h_settings");
             else if (i == navigationDrawerRow) items.add("c_navdrawer");
+            else if (i == alwaysShowDownloadIconRow) items.add("c_download_icon");
             else if (i == visibleHeaderRow) items.add("h_visible");
             else if (i == addDividerRow) items.add("b_adddiv");
             else if (i == infoRow) items.add("i_info");
@@ -328,7 +340,7 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
             if (position == settingsHeaderRow || position == visibleHeaderRow || position == hiddenHeaderRow) {
                 return TYPE_HEADER;
             }
-            if (position == navigationDrawerRow) {
+            if (position == navigationDrawerRow || position == alwaysShowDownloadIconRow) {
                 return TYPE_CHECK;
             }
             if (position == settingsShadowRow) {
@@ -357,7 +369,11 @@ public class SidebarMenuActivity extends BaseReorderManagerActivity {
                 }
                 case TYPE_CHECK: {
                     TextCheckCell cell = (TextCheckCell) holder.itemView;
-                    cell.setTextAndCheck(getString(R.string.HomeDrawer), NekoConfig.navigationDrawerEnabled.Bool(), false);
+                    if (position == navigationDrawerRow) {
+                        cell.setTextAndCheck(getString(R.string.HomeDrawer), NekoConfig.navigationDrawerEnabled.Bool(), true);
+                    } else {
+                        cell.setTextAndCheck(getString(R.string.AlwaysShowDownloadIcon), NaConfig.INSTANCE.getAlwaysShowDownloadIcon().Bool(), false);
+                    }
                     break;
                 }
                 case TYPE_INFO_PRIVACY: {

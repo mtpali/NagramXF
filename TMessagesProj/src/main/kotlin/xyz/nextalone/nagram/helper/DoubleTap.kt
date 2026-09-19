@@ -28,8 +28,6 @@ object DoubleTap {
         7
     const val DOUBLE_TAP_ACTION_EDIT =
         8
-    const val DOUBLE_TAP_ACTION_TRANSLATE_LLM =
-        9
     const val DOUBLE_TAP_ACTION_DELETE =
         10
     const val DOUBLE_TAP_ACTION_READ =
@@ -72,10 +70,6 @@ object DoubleTap {
             getString(
                 R.string.Edit
             )
-        doubleTapActionMap[DOUBLE_TAP_ACTION_TRANSLATE_LLM] =
-            getString(
-                R.string.TranslateMessageLLM
-            )
         doubleTapActionMap[DOUBLE_TAP_ACTION_DELETE] =
             getString(
                 R.string.Delete
@@ -94,7 +88,6 @@ object DoubleTap {
         doubleTapActionIconMap[DOUBLE_TAP_ACTION_REPEAT] = R.drawable.msg_repeat
         doubleTapActionIconMap[DOUBLE_TAP_ACTION_REPEAT_AS_COPY] = R.drawable.msg_repeat
         doubleTapActionIconMap[DOUBLE_TAP_ACTION_EDIT] = R.drawable.msg_edit
-        doubleTapActionIconMap[DOUBLE_TAP_ACTION_TRANSLATE_LLM] = R.drawable.magic_stick
         doubleTapActionIconMap[DOUBLE_TAP_ACTION_DELETE] = R.drawable.msg_delete
         doubleTapActionIconMap[DOUBLE_TAP_ACTION_READ] = R.drawable.msg_view_file
     }

@@ -25,7 +25,6 @@ import tw.nekomimi.nekogram.helpers.MessageHelper
 import tw.nekomimi.nekogram.translate.Translator
 import tw.nekomimi.nekogram.translate.code2Locale
 import tw.nekomimi.nekogram.translate.locale2code
-import tw.nekomimi.nekogram.translate.source.LLMTranslator
 import tw.nekomimi.nekogram.utils.AlertUtil
 import tw.nekomimi.nekogram.utils.AppScope
 import xyz.nextalone.nagram.NaConfig
@@ -309,15 +308,10 @@ private suspend fun ChatActivity.translateSingleMessage(
     val needsSummary = msg.needsSummaryTranslation(canReuseCache, targetLanguage)
     val needsOriginal = msg.needsOriginalTranslation(canReuseCache, targetLanguage)
 
-    val shouldUseContext = shouldUseLlmContext(provider)
-    val llmContext = if (shouldUseContext) {
-        buildLlmContext(this@translateSingleMessage, msg)
-    } else null
-
     // Translate summary if needed
     if (needsSummary) {
         val success =
-            translateSummary(msg, targetLocale, provider, llmContext)
+            translateSummary(msg, targetLocale, provider)
         if (!success) return
     }
 
@@ -327,13 +321,12 @@ private suspend fun ChatActivity.translateSingleMessage(
             msg.isRich -> translateRichMessageContent(msg, targetLocale)
             msg.isPoll -> translatePoll(msg, targetLocale, provider) &&
                     (msg.messageOwner.message.isNullOrEmpty() ||
-                            translateMessageContent(msg, targetLocale, provider, translatorMode, llmContext))
+                            translateMessageContent(msg, targetLocale, provider, translatorMode))
             else -> translateMessageContent(
                 msg,
                 targetLocale,
                 provider,
                 translatorMode,
-                llmContext,
             )
         }
         if (!success) return
@@ -350,13 +343,12 @@ private suspend fun ChatActivity.translateSummary(
     msg: MessageObject,
     targetLocale: Locale,
     provider: Int,
-    llmContext: String?,
 ): Boolean {
     val summaryText = msg.messageOwner.summaryText ?: return false
 
     // Translate summary
     val translatedSummary = runCatching {
-        translateText(targetLocale, summaryText.text, summaryText.entities, provider, llmContext)
+        translateText(targetLocale, summaryText.text, summaryText.entities, provider)
     }.getOrElse { e ->
         handleTranslationError(parentActivity, e, msg, translateController) {
             translateMessages(targetLocale, provider, listOf(msg))
@@ -439,15 +431,13 @@ private suspend fun ChatActivity.translateMessageContent(
     target: Locale,
     provider: Int,
     translatorMode: Int,
-    llmContext: String?
 ): Boolean {
     val result = runCatching {
         translateText(
             target,
             msg.messageOwner.message,
             msg.messageOwner.entities,
-            provider,
-            llmContext
+            provider
         )
     }.getOrElse { e ->
         handleTranslationError(parentActivity, e, msg, translateController) {
@@ -685,17 +675,10 @@ private suspend fun translateText(
     text: String,
     entities: ArrayList<TLRPC.MessageEntity>?,
     provider: Int,
-    llmContext: String?
 ): TLRPC.TL_textWithEntities {
     val safeEntities = entities ?: ArrayList()
 
-    return if (llmContext != null) {
-        LLMTranslator.withTranslationContext(llmContext) {
-            Translator.translate(target, text, safeEntities, provider)
-        }
-    } else {
-        Translator.translate(target, text, safeEntities, provider)
-    }
+    return Translator.translate(target, text, safeEntities, provider)
 }
 
 private fun handleTranslationError(
@@ -731,98 +714,4 @@ private fun clearTranslated(
     MessagesStorage.getInstance(currentAccount).updateMessageCustomParams(
         messageObject.dialogId, messageObject.messageOwner
     )
-}
-
-private fun shouldUseLlmContext(provider: Int): Boolean {
-    val effectiveProvider = provider.takeIf { it != 0 } ?: NekoConfig.translationProvider.Int()
-    return effectiveProvider == Translator.providerLLMTranslator && NaConfig.llmUseContext.Bool()
-}
-
-private fun extractLlmContextText(message: MessageObject): String? {
-    val text = MessageHelper.getMessagePlainText(message, null)?.trim().orEmpty()
-    if (text.isEmpty()) return null
-    if (MessageHelper.shouldSkipTranslation(text)) return null
-    return text
-}
-
-private fun buildLlmContext(chatActivity: ChatActivity, message: MessageObject): String? {
-    val maxMessages = LLMTranslator.getContextMessageLimit()
-    if (maxMessages <= 0) return null
-
-    val seen = HashSet<String>(maxMessages * 2)
-
-    fun extractWithDedup(candidate: MessageObject): String? {
-        val key = "${candidate.dialogId}:${candidate.id}"
-        if (!seen.add(key)) return null
-        return extractLlmContextText(candidate)
-    }
-
-    // Reply chain
-    val replyChainTexts = ArrayList<String>()
-    var reply = message.replyMessageObject
-    var isDirectReplyIncluded = false
-    while (reply != null && replyChainTexts.size < maxMessages) {
-        val text = extractWithDedup(reply)
-        if (text != null) {
-            replyChainTexts.add(text)
-            if (reply === message.replyMessageObject) isDirectReplyIncluded = true
-        }
-        reply = reply.replyMessageObject
-    }
-    if (replyChainTexts.isNotEmpty()) {
-        replyChainTexts.reverse() // oldest first
-    }
-
-    // Context messages
-    val contextTexts = ArrayList<String>()
-    val currentChat = chatActivity.currentChat
-    if (currentChat == null || !ChatObject.isChannelAndNotMegaGroup(currentChat)) {
-        val messages = chatActivity.chatAdapter?.messages
-        if (messages != null) {
-            val index = messages.indexOf(message).takeIf { it >= 0 }
-                ?: messages.indexOfFirst { it.dialogId == message.dialogId && it.id == message.id }
-                    .takeIf { it >= 0 }
-            if (index != null) {
-                val remaining = maxMessages - replyChainTexts.size
-                for (i in (index + 1) until messages.size) {
-                    if (contextTexts.size >= remaining) break
-                    val msg = messages[i]
-                    if (msg.isAyuDeleted) continue
-                    extractWithDedup(msg)?.let { contextTexts.add(it) }
-                }
-                if (contextTexts.isNotEmpty()) {
-                    contextTexts.reverse() // oldest first
-                }
-            }
-        }
-    }
-
-    if (replyChainTexts.isEmpty() && contextTexts.isEmpty()) return null
-
-    return buildString {
-        val dialogTitle = DialogObject.getName(chatActivity.currentAccount, message.dialogId).trim()
-        if (dialogTitle.isNotEmpty()) {
-            append("Chat: ").append(dialogTitle).append("\n\n")
-        }
-
-        if (replyChainTexts.isNotEmpty()) {
-            append("Reply chain (oldest → newest):\n")
-            replyChainTexts.forEachIndexed { index, text ->
-                append("R").append(index + 1).append(": ").append(text).append('\n')
-            }
-            if (isDirectReplyIncluded) {
-                append("\nMessage to translate replies to: R").append(replyChainTexts.size).append('\n')
-            } else if (message.replyMessageObject != null) {
-                append("\nMessage to translate is a reply, but the replied message text is unavailable.\n")
-            }
-            append('\n')
-        }
-
-        if (contextTexts.isNotEmpty()) {
-            append("Other context messages (chronological):\n")
-            contextTexts.forEachIndexed { index, text ->
-                append("C").append(index + 1).append(": ").append(text).append('\n')
-            }
-        }
-    }.trim().takeIf { it.isNotEmpty() }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="fork.risin42.nagramx"
+    android:accountType="fork.risin42.nagramxf"
     android:icon="@mipmap/ic_launcher_dr_round"
     android:smallIcon="@mipmap/ic_launcher_dr_round"
     android:label="@string/AppName"

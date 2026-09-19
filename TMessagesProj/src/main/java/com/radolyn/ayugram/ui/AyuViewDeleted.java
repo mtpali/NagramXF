@@ -78,7 +78,6 @@ import java.util.Locale;
 
 import kotlin.Unit;
 import tw.nekomimi.nekogram.helpers.MessageHelper;
-import tw.nekomimi.nekogram.llm.LlmConfig;
 import tw.nekomimi.nekogram.translate.Translator;
 import tw.nekomimi.nekogram.ui.MessageDetailsActivity;
 import tw.nekomimi.nekogram.ui.NekoDelegateFragment;
@@ -649,7 +648,7 @@ public class AyuViewDeleted extends NekoDelegateFragment {
         if (!TextUtils.isEmpty(textToTranslate) || msg.isPoll()) {
             boolean translated = msg.messageOwner != null && (msg.messageOwner.translated || msg.messageOwner.translatedPoll != null);
             items.add(getString(translated ? R.string.HideTranslation : R.string.Translate));
-            icons.add(LlmConfig.llmIsDefaultProvider() ? R.drawable.magic_stick : R.drawable.ic_translate);
+            icons.add(R.drawable.ic_translate);
             options.add(OPTION_TRANSLATE);
         }
 

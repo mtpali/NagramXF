@@ -165,7 +165,6 @@
     <string name="disableChoosingSticker">نمایش «در حال تایپ» به‌جای «در حال انتخاب استیکر»</string>
     <string name="disableNotificationBubbles">غیرفعال‌کردن حباب اعلان</string>
     <string name="disableSwipeToNextChannel">غیرفعال‌کردن کشیدن به کانال بعدی</string>
-    <string name="enhancedFileLoader">افزایش سرعت دانلود</string>
     <string name="hideGroupSticker">پنهان‌کردن استیکر گروه</string>
     <string name="hideSendAsChannel">پنهان‌کردن ارسال به نام کانال</string>
     <string name="iOSMessageInputField">کادر نوشتن پیام به سبک iOS</string>
