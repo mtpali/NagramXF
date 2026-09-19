@@ -1,1 +1,115 @@
-±ç^{kzË"¢}\…ªøîéäžŒ'¢›b¢{h
+name: Verify Android armv7 build
+
+on:
+  push:
+    branches: [main, build/nagramxf-armv7-20260919]
+    paths:
+      - ".updates/followup.patch.b64"
+      - "TMessagesProj/**"
+      - "build.gradle"
+      - "settings.gradle"
+      - "gradle.properties"
+      - "gradle/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Compile armeabi-v7a APK
+    runs-on: ubuntu-latest
+    env:
+      NATIVE_TARGET: armeabi-v7a
+      KEYSTORE_PASS: android
+      ALIAS_NAME: androiddebugkey
+      ALIAS_PASS: android
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_HARDLINK: "true"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: "10G"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Apply pending source update
+        id: pending
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f .updates/followup.patch.b64 ]]; then
+            base64 --decode .updates/followup.patch.b64 | gzip --decompress > /tmp/followup.patch
+            git apply --index /tmp/followup.patch
+            echo "applied=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "applied=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          append-timestamp: false
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-disabled: true
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+      - name: Install Cython
+        run: pip install Cython==3.0.11
+      - name: Configure Android SDK path
+        run: echo "sdk.dir=${ANDROID_HOME}" >> local.properties
+      - name: Create temporary CI signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f TMessagesProj/release.keystore
+          keytool -genkeypair -noprompt \
+            -keystore TMessagesProj/release.keystore \
+            -storepass "$KEYSTORE_PASS" \
+            -alias "$ALIAS_NAME" \
+            -keypass "$ALIAS_PASS" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Telegram CI, OU=Build, O=Telegram, L=None, ST=None, C=US"
+      - name: Configure Gradle memory
+        run: |
+          sed -i '/^org\.gradle\.jvmargs=/d' gradle.properties
+          echo "org.gradle.jvmargs=-Xmx8G -XX:MaxMetaspaceSize=2G -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> gradle.properties
+      - name: Compile armv7
+        env:
+          BUILD_TIMESTAMP: ${{ github.run_id }}
+          COMMIT_ID: ${{ github.sha }}
+        run: ./gradlew TMessagesProj:assembleNormalStaging
+      - name: Confirm single-ABI output
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$(find TMessagesProj/build/outputs/apk/normal/staging -type f -name '*armeabi-v7a*.apk' -print -quit)"
+          test -z "$(find TMessagesProj/build/outputs/apk/normal/staging -type f \( -name '*arm64-v8a*.apk' -o -name '*x86_64*.apk' -o -name '*universal*.apk' \) -print -quit)"
+      - name: Upload armv7 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Telegram-armeabi-v7a
+          path: TMessagesProj/build/outputs/apk/normal/staging/*armeabi-v7a*.apk
+          if-no-files-found: error
+      - name: Publish verified source update
+        if: steps.pending.outputs.applied == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .updates/followup.patch.b64
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix: complete advanced forward flow and slim settings"
+          git push origin HEAD:main
