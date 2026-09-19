@@ -233,9 +233,6 @@ public class TranscribeHelper {
                     return;
                 }
                 NaConfig.INSTANCE.getTranscribeProviderGeminiApiKey().setConfigString(apiKey == null ? "" : apiKey.toString());
-                if (NaConfig.INSTANCE.getLlmProviderGeminiKey().String().isEmpty()) {
-                    NaConfig.INSTANCE.getLlmProviderGeminiKey().setConfigString(apiKey == null ? "" : apiKey.toString());
-                }
                 var prompt = editTextPrompt.getText();
                 NaConfig.INSTANCE.getTranscribeProviderGeminiPrompt().setConfigString(prompt == null ? "" : prompt.toString());
                 dialog.dismiss();
@@ -380,9 +377,7 @@ public class TranscribeHelper {
     public static void sendRequest(String path, boolean video, BiConsumer<String, Exception> callback) {
         switch (NaConfig.INSTANCE.getTranscribeProvider().Int()) {
             case TRANSCRIBE_AUTO:
-                if (!TextUtils.isEmpty(NaConfig.INSTANCE.getTranscribeProviderGeminiApiKey().String()) ||
-                        !TextUtils.isEmpty(NaConfig.INSTANCE.getLlmProviderGeminiKey().String())
-                ) {
+                if (!TextUtils.isEmpty(NaConfig.INSTANCE.getTranscribeProviderGeminiApiKey().String())) {
                     requestGeminiAi(path, video, callback);
                 } else if (!TextUtils.isEmpty(NaConfig.INSTANCE.getTranscribeProviderOpenAiApiBase().String()) &&
                         !TextUtils.isEmpty(NaConfig.INSTANCE.getTranscribeProviderOpenAiModel().String()) &&
@@ -457,9 +452,6 @@ public class TranscribeHelper {
 
     private static void requestGeminiAi(String path, boolean video, BiConsumer<String, Exception> callback) {
         String apiKey = NaConfig.INSTANCE.getTranscribeProviderGeminiApiKey().String();
-        if (TextUtils.isEmpty(apiKey)) {
-            apiKey = NaConfig.INSTANCE.getLlmProviderGeminiKey().String().split(",")[0].trim();
-        }
         if (TextUtils.isEmpty(apiKey)) {
             callback.accept(null, new Exception(getString(R.string.GeminiApiKeyNotSet)));
             return;

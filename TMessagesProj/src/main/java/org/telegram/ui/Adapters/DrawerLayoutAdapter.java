@@ -15,6 +15,7 @@ import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
@@ -366,7 +367,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             return new Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings_old);
         } else if (id == 13) {
             return new Item(13, LocaleController.getString(R.string.ProxySettings),
-                    SharedConfig.isProxyEnabled() ? R.drawable.proxy_on : R.drawable.proxy_off);
+                    SharedConfig.isProxyEnabled() ? R.drawable.proxy_on : R.drawable.proxy_off_solar);
         } else if (id == nkbtnSettings) {
             return new Item(nkbtnSettings, LocaleController.getString(R.string.NekoSettings), R.drawable.msg_settings);
         } else if (id == nkbtnBrowser) {
