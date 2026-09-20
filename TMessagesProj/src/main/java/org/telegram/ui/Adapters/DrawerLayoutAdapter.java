@@ -61,6 +61,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
     public static int nkbtnSessions = 1010;
     public static int nkbtnMainTabsCustomize = 1011;
     public static int nkbtnFeed = 1012;
+    public static int nkbtnDownloads = 1013;
     public static final int PLUGIN_ITEM_ID_BASE = 20000;
     public DrawerLayoutAdapter(Context context, SideMenultItemAnimator animator, DrawerLayoutContainer drawerLayoutContainer) {
         mContext = context;
@@ -376,6 +377,8 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             return new Item(nkbtnMainTabsCustomize, LocaleController.getString(R.string.MainTabsCustomize), R.drawable.tabs_reorder);
         } else if (id == nkbtnFeed) {
             return new Item(nkbtnFeed, LocaleController.getString(R.string.Feed), R.drawable.ic_feed);
+        } else if (id == nkbtnDownloads) {
+            return new Item(nkbtnDownloads, LocaleController.getString(R.string.DownloadsTabs), R.drawable.msg_download);
         } else if (id == nkbtnRestartApp) {
             return new Item(nkbtnRestartApp, LocaleController.getString(R.string.RestartApp), R.drawable.msg_retry);
         }

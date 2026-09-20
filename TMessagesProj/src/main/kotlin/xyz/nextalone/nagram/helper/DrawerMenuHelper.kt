@@ -58,6 +58,7 @@ object DrawerMenuHelper {
         Entry(DrawerLayoutAdapter.nkbtnSessions, R.string.Devices, R.drawable.msg2_devices),
         Entry(DrawerLayoutAdapter.nkbtnMainTabsCustomize, R.string.MainTabsCustomize, R.drawable.tabs_reorder),
         Entry(DrawerLayoutAdapter.nkbtnFeed, R.string.Feed, R.drawable.ic_feed),
+        Entry(DrawerLayoutAdapter.nkbtnDownloads, R.string.DownloadsTabs, R.drawable.msg_download),
         Entry(DrawerLayoutAdapter.nkbtnRestartApp, R.string.RestartApp, R.drawable.msg_retry)
     )
 
@@ -82,7 +83,7 @@ object DrawerMenuHelper {
         DrawerLayoutAdapter.nkbtnBookmarks, DrawerLayoutAdapter.nkbtnBrowser,
         DrawerLayoutAdapter.nkbtnQrLogin, DrawerLayoutAdapter.nkbtnSessions,
         DrawerLayoutAdapter.nkbtnMainTabsCustomize, DrawerLayoutAdapter.nkbtnRestartApp,
-        DrawerLayoutAdapter.nkbtnFeed
+        DrawerLayoutAdapter.nkbtnFeed, DrawerLayoutAdapter.nkbtnDownloads
     )
 
     // --- persistence -------------------------------------------------------
@@ -126,7 +127,13 @@ object DrawerMenuHelper {
         }
         for (entry in entries) {
             if (!layout.contains(entry.id) && !hidden.contains(entry.id)) {
-                hidden.add(entry.id)
+                // Preserve the old setting when Downloads moves from the permanent
+                // action-bar icon into the configurable drawer.
+                if (entry.id == DrawerLayoutAdapter.nkbtnDownloads && NaConfig.alwaysShowDownloadIcon.Bool()) {
+                    layout.add(entry.id)
+                } else {
+                    hidden.add(entry.id)
+                }
                 changed = true
             }
         }

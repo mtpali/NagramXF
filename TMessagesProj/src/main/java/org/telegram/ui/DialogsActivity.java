@@ -534,6 +534,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ActionBarMenuItem downloadsItem;
     private DownloadProgressIcon downloadProgressIcon;
     private boolean downloadsItemVisible;
+    private boolean openDownloadsOnCreate;
     public ActionBarMenuItem searchItem;
     private ActionBarMenuItem optionsItem;
     private ActionBarMenuItem speedItem;
@@ -4125,8 +4126,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     getNotificationsController().showNotifications();
                     checkUi_itemPasscodeVisibility();
                 } else if (id == 3) {
-                    showSearch(true, true, true);
-                    fragmentSearchFieldWatcher.toggleSearch(true);
+                    openDownloads();
                 } else if (id == 11) {
                     openAccountSelector(switchItem);
                 } else if (id == add_to_folder) {
@@ -5896,6 +5896,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         checkUi_searchFieldStyle();
 
         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
+        if (openDownloadsOnCreate) {
+            AndroidUtilities.runOnUIThread(this::openDownloads);
+        }
         return fragmentView;
     }
 
@@ -8036,6 +8039,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         checkUi_searchFiltersVisibility();
         updateDialogsHint();
+    }
+
+    /** Opens the Downloads search tab from the configurable drawer shortcut. */
+    public void openDownloads() {
+        if (fragmentView == null || searchViewPager == null || fragmentSearchFieldWatcher == null) {
+            openDownloadsOnCreate = true;
+            return;
+        }
+        openDownloadsOnCreate = false;
+        showSearch(true, true, true);
+        fragmentSearchFieldWatcher.toggleSearch(true);
     }
 
     public boolean onlyDialogsAdapter() {
@@ -10605,21 +10619,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (proxyDrawable == null || doneItem != null && doneItem.getVisibility() == View.VISIBLE) {
             return;
         }
-        boolean showDownloads = false;
-        for (int i = 0; i < getDownloadController().downloadingFiles.size(); i++) {
-            if (getFileLoader().isLoadingFile(getDownloadController().downloadingFiles.get(i).getFileName())) {
-                showDownloads = true;
-                break;
-            }
-        }
-        if (NaConfig.INSTANCE.getAlwaysShowDownloadIcon().Bool()) {
-            showDownloads = true;
-        }
-        if ((getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
-            downloadsItemVisible = true;
-        } else {
-            downloadsItemVisible = false;
-        }
+        // Downloads are opened from the configurable drawer item. Keep the action-bar
+        // shortcut hidden even while downloads are active or unviewed.
+        downloadsItemVisible = false;
         checkUi_itemDownloadsVisibility();
 
         final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);

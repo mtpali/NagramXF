@@ -93,6 +93,7 @@ object MainMenuActions {
                 fragment.presentFragment(MainTabsCustomizeActivity())
             id == DrawerLayoutAdapter.nkbtnFeed ->
                 com.exteragram.messenger.feed.ui.FeedActivity.presentFeed(fragment)
+            id == DrawerLayoutAdapter.nkbtnDownloads -> openDownloads(fragment)
             id == DrawerLayoutAdapter.nkbtnRestartApp -> AppRestartHelper.triggerRebirth(
                 ApplicationLoader.applicationContext,
                 Intent(ApplicationLoader.applicationContext, LaunchActivity::class.java)
@@ -151,5 +152,15 @@ object MainMenuActions {
             args.putLong("user_id", UserConfig.getInstance(currentAccount).clientUserId)
             fragment.presentFragment(ChatActivity(args))
         }
+    }
+
+    private fun openDownloads(fragment: BaseFragment) {
+        if (fragment is DialogsActivity) {
+            fragment.openDownloads()
+            return
+        }
+        val dialogs = DialogsActivity(Bundle())
+        dialogs.openDownloads()
+        fragment.presentFragment(dialogs)
     }
 }

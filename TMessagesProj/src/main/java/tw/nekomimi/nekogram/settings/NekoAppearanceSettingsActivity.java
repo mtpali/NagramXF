@@ -73,7 +73,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
     private final AbstractConfigCell hideDividersRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getHideDividers()));
     private final AbstractConfigCell sectionsSeparatedHeadersRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getSectionsSeparatedHeaders(), null, getString(R.string.SeparateHeaders)));
     private final AbstractConfigCell fabShapePreviewRow = cellGroup.appendCell(new ConfigCellCustom("FabShapePreview", ConfigCellCustom.CUSTOM_ITEM_FabShapePreview, false, R.string.SquareFloatingButton));
-    private final AbstractConfigCell alwaysShowDownloadIconRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getAlwaysShowDownloadIcon()));
     private final AbstractConfigCell showStickersInTopLevelRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getShowStickersRowToplevel()));
     private final AbstractConfigCell hidePremiumSectionRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getHidePremiumSection()));
     private final AbstractConfigCell hideHelpSectionRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getHideHelpSection()));
@@ -251,7 +250,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
                     || key.equals(NekoConfig.forceLTR.getKey())
                     || key.equals(NaConfig.INSTANCE.getHidePremiumSection().getKey())
                     || key.equals(NaConfig.INSTANCE.getHideHelpSection().getKey())
-                    || key.equals(NaConfig.INSTANCE.getAlwaysShowDownloadIcon().getKey())
                     || key.equals(NaConfig.INSTANCE.getShowStickersRowToplevel().getKey())
                     || key.equals(NaConfig.INSTANCE.getFoldersAtBottom().getKey())
                     || key.equals(NaConfig.INSTANCE.getDisableDialogsFloatingButton().getKey())

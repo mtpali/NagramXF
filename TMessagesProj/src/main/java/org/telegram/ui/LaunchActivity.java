@@ -262,6 +262,7 @@ import org.telegram.ui.bots.BotWebViewAttachedSheet;
 import org.telegram.ui.bots.BotWebViewSheet;
 import org.telegram.ui.bots.WebViewRequestProps;
 import org.telegram.ui.web.WebBrowserSettings;
+import xyz.nextalone.nagram.helper.MainMenuActions;
 import org.webrtc.voiceengine.WebRtcAudioTrack;
 
 import java.io.BufferedReader;
@@ -1939,6 +1940,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             drawerLayoutContainer.closeDrawer(false);
         } else if (id == DrawerLayoutAdapter.nkbtnFeed) {
             com.exteragram.messenger.feed.ui.FeedActivity.presentFeed(getLastFragment());
+            drawerLayoutContainer.closeDrawer(false);
+        } else if (id == DrawerLayoutAdapter.nkbtnDownloads) {
+            BaseFragment lastFragment = getLastFragment();
+            if (lastFragment != null) {
+                MainMenuActions.openItem(id, lastFragment, currentAccount);
+            }
             drawerLayoutContainer.closeDrawer(false);
         } else if (id == DrawerLayoutAdapter.nkbtnRestartApp) {
             AppRestartHelper.triggerRebirth(ApplicationLoader.applicationContext, new Intent(ApplicationLoader.applicationContext, LaunchActivity.class));

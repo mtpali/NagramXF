@@ -36941,7 +36941,15 @@ public class ChatActivity extends BaseFragment implements
                         getSendMessagesHelper().sendMessage(params);
                     }
                 }
-                fragment.finishFragment();
+                if (topicsFragment != null) {
+                    // Selecting a forum topic adds TopicsFragment above the dialogs picker.
+                    // Closing only DialogsActivity leaves the user on the "Forward to" screen
+                    // even though the advanced-forward copy has already been sent.
+                    topicsFragment.finishFragment();
+                    fragment.removeSelfFromStack();
+                } else {
+                    fragment.finishFragment();
+                }
                 createUndoView();
                 if (undoView != null) {
                     if (dids.size() == 1) {
